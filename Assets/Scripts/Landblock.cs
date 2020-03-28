@@ -2,14 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BlockType
+{
+    FACTORY,
+    HOUSING,
+    HOSPITAL,
+    QUARANTINE
+}
+
 public class Landblock : MonoBehaviour
 {
-    public GameObject blockObject;
+
     public Block block;
+    
+    // determine if this block is infected in the beginning
+    public int infected;
+
+    // determine material amount in the beginning
+    public int material;
+
+    // determine type of block
+
+    public BlockType type;
+
+    public GameObject[] customOutLandBlocks; // for custom initialization
+    
+
     private bool showInfo;
 
     GUIStyle HPStyle;
     GUIStyle IPStyle;
+    GUIStyle MStyle;
     
     // Start is called before the first frame update
     void Start()
@@ -20,7 +43,8 @@ public class Landblock : MonoBehaviour
         HPStyle.normal.textColor = new Color(46f / 256f, 163f / 256f, 256f / 256f, 256f / 256f);
         IPStyle = new GUIStyle();
         IPStyle.normal.textColor = Color.red;
-
+        MStyle = new GUIStyle();
+        MStyle.normal.textColor = Color.green;
     }
 
     // Update is called once per frame
@@ -46,6 +70,29 @@ public class Landblock : MonoBehaviour
         showInfo = false;
     }
 
+    private void OnMouseDown()
+    {
+        gameObject.SendMessageUpwards("BlockClicked", gameObject);
+    }
+
+    private void OnMouseUpAsButton()
+    {
+        // gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    public void BlockClicked(GameObject obj)
+    {
+        return;
+    }
+
+    public void UpdateSelected(GameObject obj)
+    {
+        if (obj == gameObject)
+            gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
+        else
+            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
     private void OnGUI()
     {
         if (showInfo)
@@ -54,7 +101,8 @@ public class Landblock : MonoBehaviour
         }
         if (block == null) return;
         Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y - 15, 30, 30), block.HPCount.Data.ToString(), HPStyle);
-        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y + 5, 30, 30), block.IPCount.Data.ToString(), IPStyle);
+        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y - 20, 30, 30), block.HPCount.Data.ToString(), HPStyle);
+        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y + 0, 30, 30), block.CIPCount.Data.ToString(), IPStyle);
+        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y + 20, 30, 30), block.MaterialCount.Data.ToString(), MStyle);
     }
 }
