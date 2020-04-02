@@ -6,8 +6,10 @@ using UnityEngine.UI;
 
 public class Landscape : MonoBehaviour
 {
+    /* perhaps there shouldn't be global timers...
     public static readonly InfectedTimer currentTimer = new InfectedTimer(3); // UPDATE EVERY 3 ROUND
     public static readonly InfectedTimer nextTimer = new InfectedTimer(3); // UPDATE EVERY 3 ROUND
+    */
 
     public GameObject blockPrefab;
 
@@ -104,7 +106,7 @@ public class Landscape : MonoBehaviour
         {
             case CardType.QUARANTINE:
                 {
-                    block.quarantined();
+                    block.quarantined(10);
                     playerMaterialCount += card.cost;
                     break;
                 }
