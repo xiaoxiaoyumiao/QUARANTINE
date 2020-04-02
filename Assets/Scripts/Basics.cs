@@ -35,7 +35,7 @@ public class Utility
  * 写DataBuf域可以将要写的值缓存，避免覆盖掉之后可能还要用到的Data
  * 然后调用Commit就可以将DataBuf的值更新到Data
  */
-public class Variable<T>
+public class Variable<T> where T: struct
 {
     private T data;
     private T dataBuffer;
@@ -68,12 +68,20 @@ public class Variable<T>
         }
     }
 
+
+    public float priority;
+    public List<Variable<T>> outVariables;
+    public static readonly float ZERO = 1e-6f;
+    
     public Variable(T mData, VarType mType)
     {
         data = mData;
         type = mType;
         dirty = false;
+        priority = 0.0f;
+        outVariables = new List<Variable<T>>();
     }
+
     public bool NeedCommit()
     {
         return dirty;
@@ -84,6 +92,45 @@ public class Variable<T>
         dirty = false;
     }
 
+    public void AddOutVariable(Variable<T> var)
+    {
+        outVariables.Add(var);
+    }
+
+    public virtual void Broadcast(float ratio) { }
+}
+
+public class BroadcastVariableInt : Variable<int>
+{
+    public BroadcastVariableInt(int mData, VarType mType): base(mData, mType) { }
+
+    public override void Broadcast(float ratio)
+    {
+        List<Variable<int>> finalOuts = new List<Variable<int>>();
+        float prioritySum = 0.0f;
+        foreach (Variable<int> ele in outVariables)
+        {
+            if (ele.priority < -ZERO && ele.priority <= priority + ZERO) // will be ignored
+            {
+                continue;
+            }
+            prioritySum += ele.priority + 1.0f;
+            finalOuts.Add(ele);
+        }
+
+        if (ratio <= ZERO) ratio = 0.0f;
+        int delta = (int)(Data * ratio);
+        if (Data < delta) delta = Data;
+        int outSum = delta;
+        foreach (Variable<int> ele in finalOuts)
+        {
+            int alloc = (int)(delta * ((ele.priority+1.0f) / prioritySum));
+            if (outSum < alloc) alloc = outSum;
+            ele.DataBuf += alloc;
+            outSum -= alloc;
+        }
+        DataBuf -= delta - outSum;
+    }
 }
 
 public class InfectedStage
@@ -305,9 +352,6 @@ public class Block
         blockUI = mBlockUI;
         Landblock lb = blockUI.GetComponent<Landblock>();
         type = lb.type;
-
-        if (type == BlockType.FACTORY)
-            isWorking = true;
         
         lb.block = this;
         outBlocks = new List<Block>();
@@ -317,25 +361,71 @@ public class Block
         CTimer.AddStage(InfectedStage.stages[2]);
         CTimer.AddStage(InfectedStage.stages[3]);
 
-        HPCount = new Variable<int>(0, VarType.HEALTHY_POP);
-        CIPCount = new Variable<int>(0, VarType.INFECTED_POP_CURR_GEN);
-        NIPCount = new Variable<int>(0, VarType.INFECTED_POP_NEXT_GEN);
+        if (type == BlockType.FACTORY)
+            isWorking = true;
+
+        /*
+        HPCount = new BroadcastVariableInt(0, VarType.HEALTHY_POP);
+        CIPCount = new BroadcastVariableInt(0, VarType.INFECTED_POP_CURR_GEN);
+        NIPCount = new BroadcastVariableInt(0, VarType.INFECTED_POP_NEXT_GEN);
 
         MaterialCount = new Variable<int>(0, VarType.MATERIAL);
 
         // initialize infected population
         HPIPInit(lb.infected);
         MCInit(lb.material);
+        */
 
-        Debug.Log("CDR:" + CDR.ToString());
-        Debug.Log("NDR:" + NDR.ToString());
+        VarIntInit(ref HPCount, Random.Range(400, 600), VarType.HEALTHY_POP);
+        VarIntInit(ref CIPCount, 0, VarType.INFECTED_POP_CURR_GEN);
+        VarIntInit(ref NIPCount, lb.infected, VarType.INFECTED_POP_NEXT_GEN);
+        VarIntInit(ref MaterialCount, lb.material, VarType.MATERIAL);
+
     }
 
     public void AddOutBlock(Block target)
     {
         outBlocks.Add(target);
+        HPCount.AddOutVariable(target.HPCount);
+        CIPCount.AddOutVariable(target.CIPCount);
+        NIPCount.AddOutVariable(target.NIPCount);
+        MaterialCount.AddOutVariable(target.MaterialCount);
+
     }
 
+    public void VarIntInit(ref Variable<int> variable, int data, VarType type)
+    {
+        variable = new BroadcastVariableInt(data, type);
+        foreach (Block block in outBlocks)
+        {
+            switch (type)
+            {
+                case VarType.HEALTHY_POP:
+                    {
+                        variable.AddOutVariable(block.HPCount);
+                        break;
+                    }
+                case VarType.INFECTED_POP_CURR_GEN:
+                    {
+                        variable.AddOutVariable(block.CIPCount);
+                        break;
+                    }
+                case VarType.INFECTED_POP_NEXT_GEN:
+                    {
+                        variable.AddOutVariable(block.NIPCount);
+                        break;
+                    }
+                case VarType.MATERIAL:
+                    {
+                        variable.AddOutVariable(block.MaterialCount);
+                        break;
+                    }
+                default: break;
+            }
+        }
+    }
+
+    /* to be deprecated */
     public void HPIPInit(int infected)
     {
         HPCount.Data = Random.Range(400, 600);
@@ -343,6 +433,7 @@ public class Block
         NIPCount.Data = infected;
     }
 
+    /* to be deprecated */
     public void MCInit(int material)
     {
         MaterialCount.Data = material;
@@ -352,16 +443,17 @@ public class Block
     {
         HPCount.Commit();
         CIPCount.Commit();
+        NIPCount.Commit();
         MaterialCount.Commit();
     }
 
     /* 以下方法段是一些与父对象互动的工具方法 */
-    public int stopWorking()
+    public int StopWorking()
     {
         isWorking = false;
         return 0;
     }
-    public int startWorking()
+    public int StartWorking()
     {
         if (type == BlockType.FACTORY)
         {
@@ -373,7 +465,7 @@ public class Block
         }
     }
 
-    public int taxed()
+    public int Taxed()
     {
         int taxed = (int)System.Math.Floor(MaterialCount.Data * taxRate);
         MaterialCount.Data -= taxed;
@@ -383,7 +475,7 @@ public class Block
     int QUARANTINE_PERIOD = 10;
     bool isQuarantined;
     int quarantineCounter;
-    public int quarantined(int period)
+    public int Quarantined(int period)
     {
         isQuarantined = true;
         QUARANTINE_PERIOD = period;
@@ -391,7 +483,7 @@ public class Block
         return 0;
     }
 
-    public int aided()
+    public int Aided()
     {
         HPCount.Data = 0;
         CIPCount.Data = 0;
@@ -439,18 +531,28 @@ public class Block
             }
             return;
         }
+
+        /*
         int len = outBlocks.Count;
         int distr = HPCount.Data / len / 2;
-        int idistr = CIPCount.Data / len / 2;
+        int cdistr = CIPCount.Data / len / 2;
         int ndistr = NIPCount.Data / len / 2;
         foreach (Block target in outBlocks)
         {
             target.HPCount.DataBuf += distr;
             HPCount.DataBuf -= distr;
-            target.CIPCount.DataBuf += idistr;
-            CIPCount.DataBuf -= idistr;
-            target.NIPCount.DataBuf += idistr;
-            NIPCount.DataBuf -= idistr;
+
+            target.CIPCount.DataBuf += cdistr;
+            CIPCount.DataBuf -= cdistr;
+
+            target.NIPCount.DataBuf += ndistr;
+            NIPCount.DataBuf -= ndistr;
         }
+        */
+
+        HPCount.Broadcast(0.5f);
+        CIPCount.Broadcast(0.5f);
+        NIPCount.Broadcast(0.5f);
+        MaterialCount.Broadcast(0.5f);
     }
 }

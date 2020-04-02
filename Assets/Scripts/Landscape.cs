@@ -106,7 +106,7 @@ public class Landscape : MonoBehaviour
         {
             case CardType.QUARANTINE:
                 {
-                    block.quarantined(10);
+                    block.Quarantined(10);
                     playerMaterialCount += card.cost;
                     break;
                 }
@@ -116,7 +116,7 @@ public class Landscape : MonoBehaviour
                     {
                         return 3;
                     }
-                    block.stopWorking();
+                    block.StopWorking();
                     playerMaterialCount += card.cost;
                     break;
                 }
@@ -126,19 +126,19 @@ public class Landscape : MonoBehaviour
                     {
                         return 3;
                     }
-                    block.startWorking();
+                    block.StartWorking();
                     playerMaterialCount += card.cost;
                     break;
                 }
             case CardType.SPECIAL_AID:
                 {
-                    block.aided();
+                    block.Aided();
                     playerMaterialCount += card.cost;
                     break;
                 }
             case CardType.TAXING:
                 {
-                    playerMaterialCount += block.taxed();
+                    playerMaterialCount += block.Taxed();
                     playerMaterialCount += card.cost;
                     break;
                 }
