@@ -143,7 +143,7 @@ public class InfectedTimer
     {
         get
         {
-            return InfectedStage.stages[stagePointer].reproduction;
+            return stages[stagePointer].reproduction;
         }
     }
 
@@ -151,7 +151,7 @@ public class InfectedTimer
     {
         get
         {
-            return InfectedStage.stages[stagePointer].deathRate;
+            return stages[stagePointer].deathRate;
         }
     }
     
@@ -326,6 +326,9 @@ public class Block
         // initialize infected population
         HPIPInit(lb.infected);
         MCInit(lb.material);
+
+        Debug.Log("CDR:" + CDR.ToString());
+        Debug.Log("NDR:" + NDR.ToString());
     }
 
     public void AddOutBlock(Block target)
