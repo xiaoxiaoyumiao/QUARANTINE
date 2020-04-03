@@ -8,7 +8,8 @@ public enum VarType
     HEALTHY_POP,
     INFECTED_POP_CURR_GEN,
     INFECTED_POP_NEXT_GEN,
-    MATERIAL
+    MATERIAL,
+    NONE
 }
 
 public enum BlockType
@@ -29,12 +30,47 @@ public class Utility
     }
 }
 
-/* class Variable
- * 这是为了方便批量迭代而写的数据封装
- * 读写Data域可以直接获取和修改值，DataBuf域会保持和Data域的一致
- * 写DataBuf域可以将要写的值缓存，避免覆盖掉之后可能还要用到的Data
- * 然后调用Commit就可以将DataBuf的值更新到Data
- */
+/// <summary>
+/// Variable is a basic data structure defined to cope with batch iteration.
+/// It's basically a piece of data, and can be read and modified as common value type.
+/// <example>
+///    This example will read data out of a Variable, increase it by 1, and write back
+///    <code>
+///        Variable<int> p(2, VarType.NONE); // data initialized to 2
+///        int a = p.Data; // read out
+///        a += 1;
+///        p.Data = a; // write back
+///    </code>
+///    Of course you can simplify the code like this:
+///    <code>
+///        Variable<int> p(2, VarType.NONE); // data initialized to 2
+///        p.Data += 1;
+///    </code>
+/// </example>
+/// But there is some time you have to deal with a batch of variables, and you may want to 
+/// iterate on them, new value of each depending on old values of some. You can create a 
+/// buffer, calculate new values and store them to the buffer during computation, and 
+/// assign the buffer to variables after the computation is completed. But when this kind 
+/// of operation becomes frequent, the whole process will be annoying. So how about binding 
+/// the buffer directly to the variable? This is how the Variable class work. You can write
+/// to its DataBuf field while keeping its Data value unchanged, and call Commmit() to 
+/// update the value of Data. Plus, Writing to Data field will cause value in DataBuf to 
+/// follow, but it's not recommended to read DataBuf unless you are clear about how this field
+/// is handled. Here are some examples:
+/// <example>
+/// the following code will calculate Fibonacci value when iterated.
+///     <code>
+///         Variable<int> a(1, VarType.NONE);
+///         Variable<int> b(0, VarType.NONE);
+///         for (int i=0;i<10;++i){
+///             a.DataBuf = a.Data + b.Data;
+///             b.DataBuf = a.Data;
+///             a.Commit(); b.Commit();
+///         }
+///     </code>
+/// </example>
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class Variable<T> where T: struct
 {
     private T data;
@@ -104,6 +140,12 @@ public class BroadcastVariableInt : Variable<int>
 {
     public BroadcastVariableInt(int mData, VarType mType): base(mData, mType) { }
 
+    /// <summary>
+    /// Method used for data exchanging between a variable and those of its vicinity 
+    /// (stored in outVariables defined in Variable)
+    /// </summary>
+    /// <param name="ratio">ratio by which Data of this variable will be distributed.
+    /// for example, "ratio=0.5f" means that half the Data will be given out.</param>
     public override void Broadcast(float ratio)
     {
         List<Variable<int>> finalOuts = new List<Variable<int>>();
@@ -230,6 +272,12 @@ public class BlockTypeParameter
     public BlockTypeParameter(BlockType mType)
     {
         type = mType;
+        if (type == BlockType.HOSPITAL)
+        {
+            R0 = 0.5f;
+            DR = 0.0f;
+            MCR = -0.1f;
+        }
     }
 
 }
@@ -347,6 +395,14 @@ public class Block
 
     public Variable<int> MaterialCount;
 
+    public void Commit()
+    {
+        HPCount.Commit();
+        CIPCount.Commit();
+        NIPCount.Commit();
+        MaterialCount.Commit();
+    }
+
     public Block(GameObject mBlockUI)
     {
         blockUI = mBlockUI;
@@ -361,10 +417,7 @@ public class Block
         CTimer.AddStage(InfectedStage.stages[2]);
         CTimer.AddStage(InfectedStage.stages[3]);
 
-        if (type == BlockType.FACTORY)
-            isWorking = true;
-
-        /*
+        /* deprecated
         HPCount = new BroadcastVariableInt(0, VarType.HEALTHY_POP);
         CIPCount = new BroadcastVariableInt(0, VarType.INFECTED_POP_CURR_GEN);
         NIPCount = new BroadcastVariableInt(0, VarType.INFECTED_POP_NEXT_GEN);
@@ -380,6 +433,13 @@ public class Block
         VarIntInit(ref CIPCount, 0, VarType.INFECTED_POP_CURR_GEN);
         VarIntInit(ref NIPCount, lb.infected, VarType.INFECTED_POP_NEXT_GEN);
         VarIntInit(ref MaterialCount, lb.material, VarType.MATERIAL);
+
+        /* block type specific */
+        if (type == BlockType.FACTORY)
+            isWorking = true;
+
+        if (type == BlockType.HOSPITAL)
+            CIPCount.priority = 20.0f;
 
     }
 
@@ -425,27 +485,18 @@ public class Block
         }
     }
 
-    /* to be deprecated */
+    /* deprecated
     public void HPIPInit(int infected)
     {
         HPCount.Data = Random.Range(400, 600);
         CIPCount.Data = 0;
         NIPCount.Data = infected;
     }
-
-    /* to be deprecated */
     public void MCInit(int material)
     {
         MaterialCount.Data = material;
     }
-
-    public void Commit()
-    {
-        HPCount.Commit();
-        CIPCount.Commit();
-        NIPCount.Commit();
-        MaterialCount.Commit();
-    }
+    */
 
     /* 以下方法段是一些与父对象互动的工具方法 */
     public int StopWorking()
@@ -551,7 +602,7 @@ public class Block
         */
 
         HPCount.Broadcast(0.5f);
-        CIPCount.Broadcast(0.5f);
+        CIPCount.Broadcast(0.9f);
         NIPCount.Broadcast(0.5f);
         MaterialCount.Broadcast(0.5f);
     }

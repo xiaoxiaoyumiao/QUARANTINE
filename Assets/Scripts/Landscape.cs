@@ -201,11 +201,13 @@ public class Landscape : MonoBehaviour
                 obj.transform.position = new Vector2((float)(-2.0 + 1.2 * i), (float)(2.0 - 1.2 * j));
                 Block block = new Block(obj);
 
+                /*
                 // set origin of infected
                 if (i == infectedStartX && j == infectedStartY)
                     block.HPIPInit(1);
                 else
                     block.HPIPInit(0);
+                */
 
                 // set block links
                 if (i >= 1)
