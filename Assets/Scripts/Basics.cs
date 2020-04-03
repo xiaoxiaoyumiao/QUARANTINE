@@ -133,7 +133,7 @@ public class Variable<T> where T: struct
         outVariables.Add(var);
     }
 
-    public virtual void Broadcast(float ratio) { }
+    public virtual void Broadcast(float ratio, float offset = 0.0f) { }
 }
 
 public class BroadcastVariableInt : Variable<int>
@@ -146,19 +146,22 @@ public class BroadcastVariableInt : Variable<int>
     /// </summary>
     /// <param name="ratio">ratio by which Data of this variable will be distributed.
     /// for example, "ratio=0.5f" means that half the Data will be given out.</param>
-    public override void Broadcast(float ratio)
+    /// <param name="offset"></param>
+    public override void Broadcast(float ratio, float offset = 0.0f)
     {
         List<Variable<int>> finalOuts = new List<Variable<int>>();
         float prioritySum = 0.0f;
         foreach (Variable<int> ele in outVariables)
         {
-            if (ele.priority < -ZERO && ele.priority <= priority + ZERO) // will be ignored
+            if (ele.priority < offset) // will be ignored
             {
                 continue;
             }
-            prioritySum += ele.priority + 1.0f;
+            prioritySum += ele.priority + 1;
             finalOuts.Add(ele);
         }
+
+        if (prioritySum < ZERO) return;
 
         if (ratio <= ZERO) ratio = 0.0f;
         int delta = (int)(Data * ratio);
@@ -166,7 +169,7 @@ public class BroadcastVariableInt : Variable<int>
         int outSum = delta;
         foreach (Variable<int> ele in finalOuts)
         {
-            int alloc = (int)(delta * ((ele.priority+1.0f) / prioritySum));
+            int alloc = (int)(delta * ((ele.priority+1) / prioritySum));
             if (outSum < alloc) alloc = outSum;
             ele.DataBuf += alloc;
             outSum -= alloc;
@@ -602,7 +605,10 @@ public class Block
         */
 
         HPCount.Broadcast(0.5f);
-        CIPCount.Broadcast(0.9f);
+        if (type != BlockType.HOSPITAL)
+            CIPCount.Broadcast(0.9f);
+        else
+            CIPCount.Broadcast(0.9f, 2.0f);
         NIPCount.Broadcast(0.5f);
         MaterialCount.Broadcast(0.5f);
     }
