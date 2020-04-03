@@ -171,10 +171,18 @@ public class Landscape : MonoBehaviour
     void Update()
     {
         counter++;
-        if (counter > 60 * 2)
+        if (counter > 60 * 3)
         {
             endRound();
             counter = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            if (selected == null) return;
+            Landblock lb = selected.GetComponent<Landblock>();
+            Block block = lb.block;
+            playerMaterialCount += block.Taxed(); 
         }
     }
 

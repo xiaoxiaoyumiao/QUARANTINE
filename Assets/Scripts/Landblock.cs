@@ -93,8 +93,8 @@ public class Landblock : MonoBehaviour
         }
         if (block == null) return;
         Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y - 20, 30, 30), (block.HPCount.Data+block.NIPCount.Data).ToString(), HPStyle);
-        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y + 0, 30, 30), block.CIPCount.Data.ToString(), IPStyle);
-        GUI.Label(new Rect(pos.x - 10, Screen.height - pos.y + 20, 30, 30), block.MaterialCount.Data.ToString(), MStyle);
+        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y - 20, 30, 30), (block.HPCount.Data+block.NIPCount.Data).ToString(), HPStyle);
+        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y - 8, 30, 30), block.CIPCount.Data.ToString(), IPStyle);
+        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y + 4, 30, 30), block.MaterialCount.Data.ToString(), MStyle);
     }
 }

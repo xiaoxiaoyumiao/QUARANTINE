@@ -23,34 +23,34 @@ public class Card : MonoBehaviour
     void Start()
     {
         titleStyle = new GUIStyle();
-        titleStyle.fontSize = 20;
+        titleStyle.fontSize = 16;
         titleStyle.normal.textColor = Color.black;
 
         switch (type)
         {
             case CardType.QUARANTINE:
                 {
-                    cardName = "隔离";
+                    cardName = "隔离(1)";
                     break;
                 }
             case CardType.STOP_WORKING:
                 {
-                    cardName = "停工";
+                    cardName = "停工(2)";
                     break;
                 }
             case CardType.START_WORKING:
                 {
-                    cardName = "开工";
+                    cardName = "开工(3)";
                     break;
                 }
             case CardType.SPECIAL_AID:
                 {
-                    cardName = "援助";
+                    cardName = "援助(4)";
                     break;
                 }
             case CardType.TAXING:
                 {
-                    cardName = "征税";
+                    cardName = "征税(5)";
                     break;
                 }
             default:
@@ -77,8 +77,8 @@ public class Card : MonoBehaviour
     private void OnGUI()
     {
         Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Label(new Rect(pos.x - 30, Screen.height - pos.y - 35, 60, 30), cardName,titleStyle);
-        GUI.Label(new Rect(pos.x - 30, Screen.height - pos.y + 5, 60, 30), "资源：" + cost.ToString(), titleStyle);   
+        GUI.Label(new Rect(pos.x - 40, Screen.height - pos.y - 35, 60, 30), cardName,titleStyle);
+        GUI.Label(new Rect(pos.x - 40, Screen.height - pos.y + 5, 60, 30), "资源" + cost.ToString(), titleStyle);   
     }
 
 }
