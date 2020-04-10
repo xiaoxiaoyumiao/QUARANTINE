@@ -6,34 +6,45 @@ using UnityEngine.UI;
 
 public class Landscape : MonoBehaviour
 {
-    /* perhaps there shouldn't be global timers...
-    public static readonly InfectedTimer currentTimer = new InfectedTimer(3); // UPDATE EVERY 3 ROUND
-    public static readonly InfectedTimer nextTimer = new InfectedTimer(3); // UPDATE EVERY 3 ROUND
-    */
+    /* population related */
+    public InfectedTimer CTimer = null; // Current generation counter
+    public InfectedTimer NTimer = null; // Next generation counter
 
     public GameObject blockPrefab;
 
+    // deprecated variable, just for runtime landscape generation
     public ArrayList instanceList;
+
+    // deprecated constants, just for runtime landscape generation
     const int MAX_BLOCK_ROW = 10;
     const int MAX_BLOCK_COL = 10;
 
-    // public GameObject[] landblocks; // for custom initialization
+    // will be filled with child Landblocks when constructed
     public List<GameObject> landblocks;
     public List<Block> blocks;
 
-    // just for reference
-    public int totalMaterialCount = 0;
+    // global counter, just for reference
+    int totalMaterialCount = 0;
+    int playerMaterialCount = 0;
+    int dayCounter = 0;
 
-    public int playerMaterialCount = 0;
-
+    // block to manipulate, selected by player
     private GameObject selected;
 
-
-    GUIStyle materialStyle;
+    // GUI related parameters, used in OnGUI()
+    GUIStyle materialStyle = new GUIStyle();    
 
     // Start is called before the first frame update
     void Start()
     {
+        VirusModel model = gameObject.GetComponent<VirusModel>();
+        NTimer = new InfectedTimer(model.timerStagePeriod);
+        CTimer = new InfectedTimer(model.timerStagePeriod);
+        NTimer.AddStage(InfectedStage.stages[0]);
+        NTimer.AddStage(InfectedStage.stages[1]);
+        CTimer.AddStage(InfectedStage.stages[2]);
+        CTimer.AddStage(InfectedStage.stages[3]);
+
         landblocks = new List<GameObject>();
         foreach (Transform child in gameObject.transform)
         {
@@ -66,10 +77,7 @@ public class Landscape : MonoBehaviour
             }
         }
 
-
-        materialStyle = new GUIStyle();
         materialStyle.fontSize = 30;
-
     }
 
     public void UpdateTotalMaterialCount()
@@ -94,7 +102,7 @@ public class Landscape : MonoBehaviour
         if (selected == null)
             return 1;
 
-        if (playerMaterialCount < card.cost)
+        if (playerMaterialCount + card.cost < 0)
         {
             return 2;
         }
@@ -150,9 +158,12 @@ public class Landscape : MonoBehaviour
 
     void endRound()
     {
+        dayCounter++;
+        int develop = NTimer.Tick() + CTimer.Tick();
+        
         foreach (Block block in blocks)
         {
-            block.EndInBlock();
+            block.EndInBlock(develop);
         }
         foreach (Block block in blocks)
         {
@@ -190,9 +201,11 @@ public class Landscape : MonoBehaviour
     {
         GUI.Label(new Rect(30, 30, 60, 30), "资源总计：" + totalMaterialCount, materialStyle);
         GUI.Label(new Rect(30, 60, 60, 30), "政府资源：" + playerMaterialCount, materialStyle);
-
+        GUI.Label(new Rect(300, 30, 60, 30), "天数：" + dayCounter, materialStyle);
+        GUI.Label(new Rect(300, 60, 60, 30), "病毒升级倒计时：" + NTimer.countdown, materialStyle);
     }
 
+    // temorarily deprecated
     private void DynamicInit()
     {
         instanceList = new ArrayList();

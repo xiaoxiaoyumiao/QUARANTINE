@@ -67,6 +67,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
+        // You can use Utility.GetManager()(defined in Basics.cs)
         GameObject[] res = GameObject.FindGameObjectsWithTag("GameController");
         if (res.Length >= 1)
         {

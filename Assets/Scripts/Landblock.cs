@@ -6,22 +6,30 @@ public class Landblock : MonoBehaviour
 {
 
     public Block block;
-    
-    // determine if this block is infected in the beginning
+
+    /* Following variabls are used for custom initialization.
+     * Their values will be referred to in contructor of the block.
+     */
+    // number of healthy population in the block
+    // will have no effect if random generation flag in VirusModel is set
+    public int population;
+
+    // number of infected population in the block
     public int infected;
 
-    // determine material amount in the beginning
+    // number of material in the block
     public int material;
 
     // determine type of block
 
     public BlockType type;
 
-    public GameObject[] customOutLandBlocks; // for custom initialization
+    public GameObject[] customOutLandBlocks; 
     
 
     private bool showInfo;
 
+    // GUI related parameters, used in OnGUI()
     GUIStyle HPStyle;
     GUIStyle IPStyle;
     GUIStyle MStyle;
@@ -29,9 +37,9 @@ public class Landblock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         showInfo = false;
         HPStyle = new GUIStyle();
-        // titleStyle2.fontSize = 20;
         HPStyle.normal.textColor = new Color(46f / 256f, 163f / 256f, 256f / 256f, 256f / 256f);
         IPStyle = new GUIStyle();
         IPStyle.normal.textColor = Color.red;

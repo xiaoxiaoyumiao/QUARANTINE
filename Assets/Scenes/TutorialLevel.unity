@@ -2127,6 +2127,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1252725345}
   - component: {fileID: 1252725344}
+  - component: {fileID: 1252725346}
   m_Layer: 0
   m_Name: LandScapeManager
   m_TagString: GameController
@@ -2148,16 +2149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockPrefab: {fileID: 336294809118708546, guid: e9e385188d777fa43a2a2f749d13c4ce,
     type: 3}
-  landblocks:
-  - {fileID: 1019205247}
-  - {fileID: 256207621}
-  - {fileID: 1262075914}
-  - {fileID: 1782861289}
-  - {fileID: 1499649367}
-  - {fileID: 935975761}
-  - {fileID: 1472579650}
-  - {fileID: 113201019}
-  - {fileID: 1950076505}
+  landblocks: []
   totalMaterialCount: 0
   playerMaterialCount: 0
 --- !u!4 &1252725345
@@ -2201,6 +2193,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1252725346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252725343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ed95def1f5d154b98965a817669e8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stages:
+  - reproduction: 0
+    deathRate: 0
+  - reproduction: 0
+    deathRate: 0
+  - reproduction: 0
+    deathRate: 0
+  - reproduction: 0
+    deathRate: 0
 --- !u!1001 &1262075913
 PrefabInstance:
   m_ObjectHideFlags: 0
