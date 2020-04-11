@@ -52,6 +52,9 @@ public class VirusModel : MonoBehaviour
 
     // set this flag to true if you want to auto-collect and manage materials globally
     public bool autoGlobalTaxing = false;
+
+    // set this flag to true if you want to enable Population Volume mechanism
+    public bool enableVolumeConstraint = false;
     
     // Start is called before the first frame update
     void Start()
@@ -148,6 +151,8 @@ public class BlockTypeParameter
 
     public float CIP_PRIORITY_OFFSET = 0.0f;
 
+    public int POPULATION_VOLUME = 550;
+
     [System.NonSerialized]
     public int RESOURCE_MIN = 0;
 
@@ -160,6 +165,15 @@ public class BlockTypeParameter
             D_FACTOR = 0.0f;
             CONSUME_FACTOR = -0.1f;
             CIP_PRIORITY_OFFSET = 2.0f;
+            POPULATION_VOLUME = 900;
+        }
+        if (type == BlockType.QUARANTINE)
+        {
+            POPULATION_VOLUME = 1500;
+        }
+        if (type == BlockType.FACTORY)
+        {
+            POPULATION_VOLUME = 100;
         }
     }
 
