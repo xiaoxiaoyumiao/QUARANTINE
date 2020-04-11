@@ -543,6 +543,21 @@ public class Block
         return taxed;
     }
 
+    public int GetInfectedPopulation()
+    {
+        return CIPCount.Data + NIPCount.Data;
+    }
+
+    public int GetTotalPopulation()
+    {
+        return HPCount.Data + CIPCount.Data + NIPCount.Data;
+    }
+
+    public int GetConfirmedInfectedPopulation()
+    {
+        return CIPCount.Data;
+    }
+
     int QUARANTINE_PERIOD = -1;
     bool isQuarantined;
     int quarantineCounter;
