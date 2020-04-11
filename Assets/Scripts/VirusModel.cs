@@ -5,6 +5,7 @@ using UnityEngine;
 // Warning: all parameters will be overwritten at runtime
 public class VirusModel : MonoBehaviour
 {
+    [Header("Virus Timer")]
     /* Virus [R]eproduction calculation:
      * R_in_block = InfectedStage.reproduction  (as GLOBAL R FACTOR, will change with time)
      *            * BlockTypeParameter.R_FACTOR (as LOCAL R FACTOR, block type specific)
@@ -18,7 +19,6 @@ public class VirusModel : MonoBehaviour
      * Ideally Random() should obey a Poisson distribution or something
      * buf for now it's just uniform. May be modified in the future.
      */
-
     // InfectedStage(GLOBAL_R_FACTOR, GLOBAL_DR_FACTOR)
     public InfectedStage[] stages = {
          new InfectedStage(0.0f, 0.0f),
@@ -29,6 +29,7 @@ public class VirusModel : MonoBehaviour
     // number of days a stage will last
     public int timerStagePeriod = 3;
 
+    [Header("Virus Effect")]
     // Virus_{k+1} = ( Virus_{k} + VIRUS_SCALING * (NIP + CIP) ) * VIRUS_DECAY
     // VIRUS_R_FACTOR = AMPLITUDE * F( Virus_{k+1} * GRADIENT )
     // when Virus * GRADIENT >= 0.95, the VIRUS_FACTOR  will be nearly AMPLITUDE
@@ -37,12 +38,14 @@ public class VirusModel : MonoBehaviour
     public float virusAmplitude = 1.0f;
     public float virusGradient = 0.01f;
 
+    [Header("Block Parameters")]
     // Defined beneath
     public BlockTypeParameter factory = new BlockTypeParameter(BlockType.FACTORY);
     public BlockTypeParameter housing = new BlockTypeParameter(BlockType.HOUSING);
     public BlockTypeParameter hospital = new BlockTypeParameter(BlockType.HOSPITAL);
     public BlockTypeParameter quarantine = new BlockTypeParameter(BlockType.QUARANTINE);
 
+    [Header("Mechanic Options")]
     // set this flag to true if you want to generate random population for all blocks
     // the range of random generation is defined in VirusModel
     public bool randomPopulation = true;
@@ -55,6 +58,9 @@ public class VirusModel : MonoBehaviour
 
     // set this flag to true if you want to enable Population Volume mechanism
     public bool enableVolumeConstraint = false;
+
+    // set this flag to true if you want to see all infected
+    public bool enableGodView = false;
     
     // Start is called before the first frame update
     void Start()

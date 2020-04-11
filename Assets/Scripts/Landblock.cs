@@ -109,10 +109,16 @@ public class Landblock : MonoBehaviour
             switch (i.name)
             {
                 case "HPUI":
-                    i.text = (block.HPCount.Data + block.NIPCount.Data).ToString();
+                    if (Utility.GetVirusModel().enableGodView)
+                        i.text = block.HPCount.Data.ToString();
+                    else
+                        i.text = (block.HPCount.Data + block.NIPCount.Data).ToString();
                     break;
                 case "CIPUI":
-                    i.text = block.CIPCount.Data.ToString();
+                    if (Utility.GetVirusModel().enableGodView)
+                        i.text = (block.CIPCount.Data + block.NIPCount.Data).ToString();
+                    else
+                        i.text = block.CIPCount.Data.ToString();
                     break;                  
                 case "MPUI":
                     i.text = block.MaterialCount.Data.ToString();
