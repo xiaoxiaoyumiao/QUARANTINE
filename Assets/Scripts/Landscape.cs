@@ -6,6 +6,21 @@ using UnityEngine.UI;
 
 public class Landscape : MonoBehaviour
 {
+
+    [Header("Title")]
+    public GameObject successTitle;
+    public GameObject failTitle;
+
+    [Header("condition")]
+    public int failLimitedTime;
+
+    [Header("card")]
+    public Card quarantineCard;
+    public Card stopWorkingCard;
+    public Card startWorkingCard;
+    public Card aidCard;
+    public Card taxingCard;
+
     /* population related */
     public InfectedTimer CTimer = null; // Current generation counter
     public InfectedTimer NTimer = null; // Next generation counter
@@ -37,6 +52,10 @@ public class Landscape : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        successTitle.SetActive(false);
+        failTitle.SetActive(false);
+
         VirusModel model = gameObject.GetComponent<VirusModel>();
         NTimer = new InfectedTimer(model.timerStagePeriod);
         CTimer = new InfectedTimer(model.timerStagePeriod);
@@ -108,6 +127,12 @@ public class Landscape : MonoBehaviour
         BroadcastMessage("UpdateSelected", obj); 
     }
 
+    public void OperateBlock(Block block)
+    {
+
+    }
+
+
     public int CardEventDispatched(Card card)
     {
         Debug.Log(card.type);
@@ -118,10 +143,10 @@ public class Landscape : MonoBehaviour
         {
             return 2;
         }
-        
+
         Landblock lb = selected.GetComponent<Landblock>();
         Block block = lb.block;
-        
+
         switch (card.type)
         {
             case CardType.QUARANTINE:
@@ -192,22 +217,56 @@ public class Landscape : MonoBehaviour
 
     // Update is called once per frame
     int counter;
+
+    // 胜利失败条件
+    string CheckSucceedOrFail()
+    {
+        if (failLimitedTime < 0)
+        {
+            failTitle.SetActive(true);
+            return "fail";
+        }
+
+        int healthCnt = 0;
+        foreach (Block block in blocks)
+        {
+            healthCnt += block.GetInfectedPopulation();
+        }
+        if (healthCnt == 0)
+        {
+            successTitle.SetActive(true);
+            return "success";
+        }
+
+        return "";
+    }
+
+    bool gameover = false;
     void Update()
     {
         counter++;
+        if (gameover)
+            return;
+
+        string s = CheckSucceedOrFail();
+        if(s == "fail" || s == "success")
+        {
+            gameover = true;
+            return;
+        } 
+
         if (counter > 60 * 3)
         {
             endRound();
             counter = 0;
+            failLimitedTime--;
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            if (selected == null) return;
-            Landblock lb = selected.GetComponent<Landblock>();
-            Block block = lb.block;
-            playerMaterialCount += block.Taxed(); 
-        }
+        if (Input.GetKeyDown(KeyCode.Alpha1)){ CardEventDispatched(quarantineCard);}
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) { CardEventDispatched(stopWorkingCard); }
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) { CardEventDispatched(startWorkingCard); }
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) { CardEventDispatched(aidCard); }
+        else if (Input.GetKeyDown(KeyCode.Alpha5)) { CardEventDispatched(taxingCard); }
     }
 
     private void OnGUI()

@@ -571,7 +571,7 @@ public class Block
 
     public int Aided()
     {
-        HPCount.Data = 0;
+        HPCount.Data = HPCount.Data +  NIPCount.Data; //原因在于潜伏期人会非常多,影响视觉感受
         CIPCount.Data = 0;
         NIPCount.Data = 0;
         return 0;
