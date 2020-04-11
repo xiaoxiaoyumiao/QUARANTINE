@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Landblock : MonoBehaviour
 {
@@ -103,9 +104,22 @@ public class Landblock : MonoBehaviour
             GUI.Label(new Rect(Input.mousePosition.x, Screen.height-Input.mousePosition.y-15, 30, 30), block.HPCount.Data.ToString(),HPStyle);
         }
         if (block == null) return;
-        Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y - 20, 30, 30), (block.HPCount.Data+block.NIPCount.Data).ToString(), HPStyle);
-        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y - 8, 30, 30), block.CIPCount.Data.ToString(), IPStyle);
-        GUI.Label(new Rect(pos.x - 15, Screen.height - pos.y + 4, 30, 30), block.MaterialCount.Data.ToString(), MStyle);
+        foreach (Text i in this.GetComponentInChildren<Canvas>().GetComponentsInChildren<Text>())
+        {
+            switch (i.name)
+            {
+                case "HPUI":
+                    i.text = (block.HPCount.Data + block.NIPCount.Data).ToString();
+                    break;
+                case "CIPUI":
+                    i.text = block.CIPCount.Data.ToString();
+                    break;                  
+                case "MPUI":
+                    i.text = block.MaterialCount.Data.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

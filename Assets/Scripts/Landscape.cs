@@ -199,10 +199,10 @@ public class Landscape : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(30, 30, 60, 30), "资源总计：" + totalMaterialCount, materialStyle);
-        GUI.Label(new Rect(30, 60, 60, 30), "政府资源：" + playerMaterialCount, materialStyle);
-        GUI.Label(new Rect(300, 30, 60, 30), "天数：" + dayCounter, materialStyle);
-        GUI.Label(new Rect(300, 60, 60, 30), "病毒升级倒计时：" + NTimer.countdown, materialStyle);
+        GameObject.Find("Canvas/Panel/ResourceUI").GetComponent<Text>().text = "资源总计：" + totalMaterialCount;
+        GameObject.Find("Canvas/Panel/TaxUI").GetComponent<Text>().text = "政府资源：" + playerMaterialCount;
+        GameObject.Find("Canvas/Panel/DayUI").GetComponent<Text>().text = "天数：" + dayCounter;
+        GameObject.Find("Canvas/Panel/TimerUI").GetComponent<Text>().text = "病毒升级倒计时：" + NTimer.countdown;
     }
 
     // temorarily deprecated

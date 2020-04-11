@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum CardType
 {
@@ -77,9 +78,20 @@ public class Card : MonoBehaviour
 
     private void OnGUI()
     {
-        Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Label(new Rect(pos.x - 40, Screen.height - pos.y - 35, 60, 30), cardName,titleStyle);
-        GUI.Label(new Rect(pos.x - 40, Screen.height - pos.y + 5, 60, 30), "资源" + cost.ToString(), titleStyle);   
+        foreach (Text i in this.GetComponentInChildren<Canvas>().GetComponentsInChildren<Text>())
+        {
+            switch (i.name)
+            {
+                case "costUI":
+                    i.text = cost.ToString();
+                    break;
+                case "Title":
+                    i.text = cardName;
+                    break;              
+                default:
+                    break;
+            }
+        }
     }
 
 }
