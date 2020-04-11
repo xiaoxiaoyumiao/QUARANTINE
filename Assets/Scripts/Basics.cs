@@ -620,22 +620,11 @@ public class Block
             return;
         }
 
-        /* old ways of broadcasting
-        int len = outBlocks.Count;
-        int distr = HPCount.Data / len / 2;
-        int cdistr = CIPCount.Data / len / 2;
-        int ndistr = NIPCount.Data / len / 2;
-        foreach (Block target in outBlocks)
+        if (model.enableVolumeConstraint)
         {
-            target.HPCount.DataBuf += distr;
-            HPCount.DataBuf -= distr;
-
-            target.CIPCount.DataBuf += cdistr;
-            CIPCount.DataBuf -= cdistr;
-
-            target.NIPCount.DataBuf += ndistr;
-            NIPCount.DataBuf -= ndistr;
-        }*/
+            int count = GetTotalPopulation();
+            CIPCount.priority = NIPCount.priority = HPCount.priority = parameter.POPULATION_VOLUME - count;
+        }
 
         VirusCount.Broadcast(parameter.VIRUS_MOVE_RATIO);
 
