@@ -1334,7 +1334,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 769.4618
+  orthographic size: 333.53253
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2896,10 +2896,6 @@ MonoBehaviour:
   failTitle: {fileID: 2098545525}
   failLimitedTime: 30
   quarantineCard: {fileID: 977180414}
-  stopWorkingCard: {fileID: 0}
-  startWorkingCard: {fileID: 0}
-  aidCard: {fileID: 0}
-  taxingCard: {fileID: 0}
   blockPrefab: {fileID: 336294809118708546, guid: e9e385188d777fa43a2a2f749d13c4ce,
     type: 3}
   landblocks: []
@@ -2982,7 +2978,6 @@ MonoBehaviour:
     M_MOVE_RATIO: 0.5
     VIRUS_MOVE_RATIO: 0.5
     CIP_PRIORITY_OFFSET: 0
-    POPULATION_VOLUME: 100
   housing:
     R_FACTOR: 2
     D_FACTOR: 1
@@ -2995,7 +2990,6 @@ MonoBehaviour:
     M_MOVE_RATIO: 0.5
     VIRUS_MOVE_RATIO: 0.5
     CIP_PRIORITY_OFFSET: 0
-    POPULATION_VOLUME: 550
   hospital:
     R_FACTOR: 0.5
     D_FACTOR: 0
@@ -3008,7 +3002,6 @@ MonoBehaviour:
     M_MOVE_RATIO: 0.5
     VIRUS_MOVE_RATIO: 0.5
     CIP_PRIORITY_OFFSET: 2
-    POPULATION_VOLUME: 900
   quarantine:
     R_FACTOR: 0.5
     D_FACTOR: 1
@@ -3021,13 +3014,10 @@ MonoBehaviour:
     M_MOVE_RATIO: 0.5
     VIRUS_MOVE_RATIO: 0.5
     CIP_PRIORITY_OFFSET: 0
-    POPULATION_VOLUME: 1500
   randomPopulation: 1
   randomPopulationMin: 400
   randomPopulationMax: 600
   autoGlobalTaxing: 1
-  enableVolumeConstraint: 0
-  enableGodView: 1
 --- !u!1 &1257244648
 GameObject:
   m_ObjectHideFlags: 0
