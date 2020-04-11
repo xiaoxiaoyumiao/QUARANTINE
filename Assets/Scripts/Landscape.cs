@@ -151,7 +151,7 @@ public class Landscape : MonoBehaviour
         {
             case CardType.QUARANTINE:
                 {
-                    block.Quarantined(10);
+                    block.Quarantined(10); //TODO parameterize
                     playerMaterialCount += card.cost;
                     break;
                 }
