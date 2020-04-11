@@ -2150,8 +2150,6 @@ MonoBehaviour:
   blockPrefab: {fileID: 336294809118708546, guid: e9e385188d777fa43a2a2f749d13c4ce,
     type: 3}
   landblocks: []
-  totalMaterialCount: 0
-  playerMaterialCount: 0
 --- !u!4 &1252725345
 Transform:
   m_ObjectHideFlags: 0
@@ -2208,12 +2206,68 @@ MonoBehaviour:
   stages:
   - reproduction: 0
     deathRate: 0
-  - reproduction: 0
+  - reproduction: 1
     deathRate: 0
-  - reproduction: 0
-    deathRate: 0
-  - reproduction: 0
-    deathRate: 0
+  - reproduction: 1
+    deathRate: 1
+  - reproduction: 1
+    deathRate: 0.5
+  timerStagePeriod: 3
+  virusScaling: 0.1
+  virusDecay: 0.9
+  virusAmplitude: 1
+  virusGradient: 0.01
+  factory:
+    R_FACTOR: 2
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.01
+    PRODUCE_FACTOR: 1
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+  housing:
+    R_FACTOR: 2
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.01
+    PRODUCE_FACTOR: 1
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+  hospital:
+    R_FACTOR: 0.5
+    D_FACTOR: 0
+    CONSUME_FACTOR: -0.1
+    PRODUCE_FACTOR: 1
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 2
+  quarantine:
+    R_FACTOR: 0.5
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.01
+    PRODUCE_FACTOR: 1
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+  randomPopulation: 1
+  randomPopulationMin: 400
+  randomPopulationMax: 600
 --- !u!1001 &1262075913
 PrefabInstance:
   m_ObjectHideFlags: 0

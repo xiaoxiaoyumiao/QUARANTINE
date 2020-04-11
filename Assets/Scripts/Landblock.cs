@@ -17,6 +17,9 @@ public class Landblock : MonoBehaviour
     // number of infected population in the block
     public int infected;
 
+    // number of virus in the block
+    public int virus;
+
     // number of material in the block
     public int material;
 

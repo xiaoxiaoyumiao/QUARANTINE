@@ -5,20 +5,21 @@ using UnityEditor;
 
 public enum VarType
 {
-    HEALTHY_POP,
-    INFECTED_POP_CURR_GEN,
-    INFECTED_POP_NEXT_GEN,
-    MATERIAL,
-    NONE
+    HEALTHY_POP = 1,
+    INFECTED_POP_CURR_GEN = 2,
+    INFECTED_POP_NEXT_GEN = 3,
+    MATERIAL = 4,
+    VIRUS_COUNT = 5,
+    NONE = 0
 }
 
 public enum BlockType
 {
-    ERROR,
-    FACTORY,
-    HOUSING,
-    HOSPITAL,
-    QUARANTINE
+    ERROR = 0,
+    FACTORY = 1,
+    HOUSING = 2,
+    HOSPITAL = 3,
+    QUARANTINE = 4
 }
 
 public class Utility
@@ -289,103 +290,10 @@ public class InfectedTimer
     
 }
 
-
-/* BlockTypeParameter
- * important parameters that are strongly (or at least potentially) related to block type
- * though some of them may be temporarily the same for all types of blocks
- */
-[System.Serializable]
-public class BlockTypeParameter
-{
-    [System.NonSerialized]
-    private static BlockTypeParameter mFactory;
-    [System.NonSerialized]
-    private static BlockTypeParameter mHousing;
-    [System.NonSerialized]
-    private static BlockTypeParameter mHospital;
-    [System.NonSerialized]
-    private static BlockTypeParameter mQuarantine;
-
-    public static BlockTypeParameter factory
-    {
-        get
-        {
-            if (mFactory == null)
-                mFactory = Utility.GetVirusModel().factory;
-            return mFactory;
-        }
-    }
-    public static BlockTypeParameter housing
-    {
-        get
-        {
-            if (mHousing == null)
-                mHousing = Utility.GetVirusModel().housing;
-            return mHousing;
-        }
-    }
-    public static BlockTypeParameter hospital
-    {
-        get
-        {
-            if (mHospital == null)
-                mHospital = Utility.GetVirusModel().hospital;
-            return mHospital;
-        }
-    }
-    public static BlockTypeParameter quarantine
-    {
-        get
-        {
-            if (mQuarantine == null)
-                mQuarantine = Utility.GetVirusModel().quarantine;
-            return mQuarantine;
-        }
-    }
-
-    [System.NonSerialized]
-    public BlockType type;
-    
-    // reproduction rate factor
-    public float R_FACTOR = 2.0f;
-    // death rate factor
-    public float D_FACTOR = 1.0f;
-    // material consuming rate factor
-    public float CONSUME_FACTOR = -0.01f;
-    // material producing rate factor (FOR FACTORY)
-    public float PRODUCE_FACTOR = +1f;
-    // tax rate
-    public float TAX_RATE = 0.05f;
-    // ratio by which healthy population will move out at most
-    public float HP_MOVE_RATIO = 0.5f;
-    // ratio by which current generation of infected population will move out at most
-    public float CIP_MOVE_RATIO = 0.9f;
-    // ratio by which next generation of infected population will move out at most
-    public float NIP_MOVE_RATIO = 0.6f;
-    // ratio by which material will move out at most
-    public float M_MOVE_RATIO = 0.5f;
-
-
-    [System.NonSerialized]
-    public int RESOURCE_MIN = 0;
-    
-    // This is a default constructor, parameters will be overwritten by data set in the inspector.
-    public BlockTypeParameter(BlockType mType)
-    {
-        type = mType;
-        if (type == BlockType.HOSPITAL)
-        {
-            R_FACTOR = 0.5f;
-            D_FACTOR = 0.0f;
-            CONSUME_FACTOR = -0.1f;
-        }
-    }
-
-}
-
 public class Block
 {
     public BlockTypeParameter parameter;
+    VirusModel model;
     public BlockType type
     {
         get
@@ -458,23 +366,27 @@ public class Block
         }
     }
 
-    /* population related */
-    InfectedTimer CTimer = null; // Current generation counter
-    InfectedTimer NTimer = null; // Next generation counter
+    InfectedTimer CTimer = null; // Current generation Timer
+    InfectedTimer NTimer = null; // Next generation Timer
+    // Local R0(Reproduction) and DR(Death Rate) factor definition.
+    // Used in EndInBlock()
+    // R0 for CIP
     public float CR0
     {
         get
         {
-            return parameter.R_FACTOR * CTimer.Reproduction;
+            return VIRUS_R_FACTOR + parameter.R_FACTOR * CTimer.Reproduction;
         }
     }
+    // R0 for NIP
     public float NR0
     {
         get
         {
-            return parameter.R_FACTOR * NTimer.Reproduction;
+            return VIRUS_R_FACTOR + parameter.R_FACTOR * NTimer.Reproduction;
         }
     }
+    // DR for CIP
     public float CDR
     {
         get
@@ -482,6 +394,7 @@ public class Block
             return parameter.D_FACTOR * CTimer.DeathRate;
         }
     }
+    // DR for NIP
     public float NDR
     {
         get
@@ -490,17 +403,31 @@ public class Block
         }
     }
 
-    public Variable<int> HPCount;
-    public Variable<int> CIPCount; // Current generation of infected
-    public Variable<int> NIPCount; // Next generation of infected, temporarily not used
+    public Variable<int> HPCount;       // Healthy Population
+    public Variable<int> CIPCount;      // Current generation of Infected Population
+    public Variable<int> NIPCount;      // Next generation of Infected Population
 
-    public Variable<int> MaterialCount;
+    // Virus_{k+1} = ( Virus_{k} + VIRUS_SCALING * (NIP + CIP) ) * VIRUS_DECAY
+    // VIRUS_R_FACTOR = AMPLITUDE * F( Virus * GRADIENT )
+    // when Virus * GRADIENT >= 0.95, the VIRUS_FACTOR  will be nearly AMPLITUDE
+    // all parameters above are defined in VirusModel
+    public float VIRUS_R_FACTOR
+    {
+        get
+        {
+            return (float)(model.virusAmplitude * System.Math.Atan(VirusCount.Data * model.virusGradient * 12 ));
+        }
+    }
+    public Variable<int> VirusCount;    // Simulation of spreading trace of virus
+
+    public Variable<int> MaterialCount; // Material count
 
     public void Commit()
     {
         HPCount.Commit();
         CIPCount.Commit();
         NIPCount.Commit();
+        VirusCount.Commit();
         MaterialCount.Commit();
     }
 
@@ -508,7 +435,7 @@ public class Block
     {
         GameObject manager = Utility.GetManager();
         Landscape scape = manager.GetComponent<Landscape>();
-        VirusModel model = manager.GetComponent<VirusModel>();
+        model = manager.GetComponent<VirusModel>();
 
         blockUI = mBlockUI;
         Landblock lb = blockUI.GetComponent<Landblock>();
@@ -527,6 +454,7 @@ public class Block
         VarIntInit(ref CIPCount, 0, VarType.INFECTED_POP_CURR_GEN);
         VarIntInit(ref NIPCount, lb.infected, VarType.INFECTED_POP_NEXT_GEN);
         VarIntInit(ref MaterialCount, lb.material, VarType.MATERIAL);
+        VarIntInit(ref VirusCount, lb.virus, VarType.VIRUS_COUNT);
 
         /* block type specific */
         if (type == BlockType.FACTORY)
@@ -572,6 +500,11 @@ public class Block
                 case VarType.MATERIAL:
                     {
                         variable.AddOutVariable(block.MaterialCount);
+                        break;
+                    }
+                case VarType.VIRUS_COUNT:
+                    {
+                        variable.AddOutVariable(block.VirusCount);
                         break;
                     }
                 default: break;
@@ -626,8 +559,10 @@ public class Block
     /* 回合结束时首先执行的块内结算，不涉及与其他块的数据交换 */
     public void EndInBlock(int develop)
     {
-        // population counted
-        // int develop = CTimer.Tick() + NTimer.Tick();
+        /* virus update */
+        VirusCount.Data = (int)System.Math.Ceiling((VirusCount.Data + model.virusScaling * (CIPCount.Data + NIPCount.Data)) * model.virusDecay);
+        
+        /* population update */
         if (develop > 0) // pandemics developed
         {
             // shift generation
@@ -645,7 +580,7 @@ public class Block
         death = Utility.AdaptedRandomNumber(NDR, NIPCount.Data);
         NIPCount.Data -= death;
 
-        // material counted
+        /* material update */
         MaterialCount.Data += (int)System.Math.Floor(MCRate*(HPCount.Data+CIPCount.Data));
         if (MaterialCount.Data < RESOURCE_MIN)
             MaterialCount.Data = RESOURCE_MIN;
@@ -679,15 +614,14 @@ public class Block
 
             target.NIPCount.DataBuf += ndistr;
             NIPCount.DataBuf -= ndistr;
-        }
-        */
+        }*/
+
+        VirusCount.Broadcast(parameter.VIRUS_MOVE_RATIO);
 
         HPCount.Broadcast(parameter.HP_MOVE_RATIO);
-        if (type != BlockType.HOSPITAL)
-            CIPCount.Broadcast(parameter.CIP_MOVE_RATIO);
-        else
-            CIPCount.Broadcast(parameter.CIP_MOVE_RATIO, 2.0f);
+        CIPCount.Broadcast(parameter.CIP_MOVE_RATIO, parameter.CIP_PRIORITY_OFFSET);
         NIPCount.Broadcast(parameter.NIP_MOVE_RATIO);
+
         MaterialCount.Broadcast(parameter.M_MOVE_RATIO);
     }
 }
