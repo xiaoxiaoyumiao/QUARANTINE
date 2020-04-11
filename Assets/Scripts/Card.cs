@@ -24,7 +24,7 @@ public class Card : MonoBehaviour
     void Start()
     {
         titleStyle = new GUIStyle();
-        titleStyle.fontSize = 16;
+        titleStyle.fontSize = 14;
         titleStyle.normal.textColor = Color.black;
 
         switch (type)
@@ -84,6 +84,7 @@ public class Card : MonoBehaviour
             {
                 case "costUI":
                     i.text = cost.ToString();
+                    i.fontSize = 14;
                     break;
                 case "Title":
                     i.text = cardName;
