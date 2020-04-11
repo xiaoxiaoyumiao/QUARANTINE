@@ -3095,7 +3095,7 @@ MonoBehaviour:
     R_FACTOR: 2
     D_FACTOR: 1
     CONSUME_FACTOR: -0.001
-    PRODUCE_FACTOR: 0.02
+    PRODUCE_FACTOR: 0.04
     TAX_RATE: 0.05
     HP_MOVE_RATIO: 0.05
     CIP_MOVE_RATIO: 0.01
@@ -3148,6 +3148,7 @@ MonoBehaviour:
   randomPopulationMax: 3000
   autoGlobalTaxing: 1
   enableVolumeConstraint: 1
+  enableGodView: 0
 --- !u!1 &1257244648
 GameObject:
   m_ObjectHideFlags: 0
