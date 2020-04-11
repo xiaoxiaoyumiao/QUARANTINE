@@ -536,6 +536,12 @@ public class Block
         MaterialCount.Data -= taxed;
         return taxed;
     }
+    public int TaxAll()
+    {
+        int taxed = MaterialCount.Data;
+        MaterialCount.Data = 0;
+        return taxed;
+    }
 
     int QUARANTINE_PERIOD = -1;
     bool isQuarantined;
@@ -582,7 +588,7 @@ public class Block
 
         /* material update */
         MaterialCount.Data += (int)System.Math.Floor(MCRate*(HPCount.Data+CIPCount.Data));
-        if (MaterialCount.Data < RESOURCE_MIN)
+        if (!(model.autoGlobalTaxing) && MaterialCount.Data < RESOURCE_MIN)
             MaterialCount.Data = RESOURCE_MIN;
     }
 

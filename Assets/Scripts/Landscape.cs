@@ -77,16 +77,28 @@ public class Landscape : MonoBehaviour
             }
         }
 
+        UpdateTotalMaterialCount();
+
         materialStyle.fontSize = 30;
     }
 
     public void UpdateTotalMaterialCount()
     {
         totalMaterialCount = 0;
+        if (Utility.GetVirusModel().autoGlobalTaxing)
+        {
+            foreach (Block block in blocks)
+            {
+                playerMaterialCount += block.TaxAll();
+            }
+            return;
+        }
+        
         foreach (Block block in blocks)
         {
             totalMaterialCount += block.MaterialCount.Data;
         }
+
     }
 
     public void BlockClicked(GameObject obj)
@@ -146,6 +158,7 @@ public class Landscape : MonoBehaviour
                 }
             case CardType.TAXING:
                 {
+                    if (Utility.GetVirusModel().autoGlobalTaxing) break;
                     playerMaterialCount += block.Taxed();
                     playerMaterialCount += card.cost;
                     break;

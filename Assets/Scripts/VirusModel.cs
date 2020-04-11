@@ -49,6 +49,9 @@ public class VirusModel : MonoBehaviour
     // random population generation parameter
     public int randomPopulationMin = 400;
     public int randomPopulationMax = 600;
+
+    // set this flag to true if you want to auto-collect and manage materials globally
+    public bool autoGlobalTaxing = false;
     
     // Start is called before the first frame update
     void Start()
