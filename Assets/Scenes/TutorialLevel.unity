@@ -1582,7 +1582,7 @@ PrefabInstance:
     - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: cost
-      value: -1000
+      value: -250
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -3095,7 +3095,7 @@ MonoBehaviour:
     R_FACTOR: 2
     D_FACTOR: 1
     CONSUME_FACTOR: -0.001
-    PRODUCE_FACTOR: 0.02
+    PRODUCE_FACTOR: 0.04
     TAX_RATE: 0.05
     HP_MOVE_RATIO: 0.05
     CIP_MOVE_RATIO: 0.01
@@ -3148,6 +3148,7 @@ MonoBehaviour:
   randomPopulationMax: 3000
   autoGlobalTaxing: 1
   enableVolumeConstraint: 1
+  enableGodView: 0
 --- !u!1 &1257244648
 GameObject:
   m_ObjectHideFlags: 0
