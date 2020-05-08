@@ -59,7 +59,7 @@ public class Landscape : MonoBehaviour
             for (int j = -10; j < 13; ++j)
             {
                 int scale = 70;
-                Tile tile = ScriptableObject.CreateInstance<Tile>();//创建Tile，注意，要使用这种方式
+                Tile tile = ScriptableObject.CreateInstance<Tile>();
                 Sprite tmp = Utility.GetSprite(SpriteType.RANDOM_ROAD);
                 tile.sprite = tmp;
                 tilemap.SetTile(new Vector3Int(i*scale,j*scale,0),tile); 
@@ -292,6 +292,7 @@ public class Landscape : MonoBehaviour
 
     private void OnGUI()
     {
+        Debug.Log(GameObject.Find("Canvas/Panel/ResourceUI"));
         GameObject.Find("Canvas/Panel/ResourceUI").GetComponent<Text>().text = "资源总计：" + totalMaterialCount;
         GameObject.Find("Canvas/Panel/TaxUI").GetComponent<Text>().text = "政府资源：" + playerMaterialCount;
         GameObject.Find("Canvas/Panel/DayUI").GetComponent<Text>().text = "天数：" + dayCounter;
