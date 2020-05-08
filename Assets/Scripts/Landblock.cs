@@ -10,6 +10,9 @@ public class Landblock : MonoBehaviour
 
     /* Following variabls are used for custom initialization.
      * Their values will be referred to in contructor of the block.
+     * WARNING: exact property of blocks may be changed during game,
+     * making data here invalid. Keep in mind that these are only
+     * INITIAL data.
      */
     // number of healthy population in the block
     // will have no effect if random generation flag in VirusModel is set
@@ -25,7 +28,6 @@ public class Landblock : MonoBehaviour
     public int material;
 
     // determine type of block
-
     public BlockType type;
 
     public GameObject[] customOutLandBlocks; 
@@ -62,6 +64,7 @@ public class Landblock : MonoBehaviour
             Debug.DrawLine(sLoc, tLoc, Color.yellow);
         }
 
+
     }
 
     private void OnMouseOver()
@@ -97,8 +100,40 @@ public class Landblock : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().color = Color.white;
     }
 
+    public void UpdateSprite()
+    {
+        if (block == null) return;
+        if (Utility.GetVirusModel().enableUIVer2)
+        {
+            SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+            Sprite sprite = null;
+            switch (block.type)
+            {
+                case BlockType.HOSPITAL:
+                    sprite = Utility.GetSprite(SpriteType.HOSPITAL);
+                    break;
+                case BlockType.FACTORY:
+                    if (block.isWorking) sprite = Utility.GetSprite(SpriteType.FACTORY_WORKING);
+                    else sprite = Utility.GetSprite(SpriteType.FACTORY_CLOSED);
+                    break;
+                case BlockType.HOUSING:
+                    sprite = Utility.GetSprite(SpriteType.HOUSING);
+                    break;
+                case BlockType.QUARANTINE:
+                    sprite = Utility.GetSprite(SpriteType.QUARANTINE);
+                    break;
+            }
+            if (sprite != null)
+            {
+                sr.sprite = sprite;
+            }
+            else Debug.Log("Sprite error!");
+        }
+    }
+    
     private void OnGUI()
     {
+        
         if (showInfo)
         {
             GUI.Label(new Rect(Input.mousePosition.x, Screen.height-Input.mousePosition.y-15, 30, 30), block.HPCount.Data.ToString(),HPStyle);

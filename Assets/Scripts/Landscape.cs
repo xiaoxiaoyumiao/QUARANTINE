@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 
@@ -49,14 +50,34 @@ public class Landscape : MonoBehaviour
     // GUI related parameters, used in OnGUI()
     GUIStyle materialStyle = new GUIStyle();    
 
+    void PaintBackground()
+    {
+        Tilemap tilemap = GameObject.FindGameObjectWithTag("Background").GetComponent<Tilemap>();
+        tilemap.ClearAllTiles();
+        for (int i= -10;i<10; ++i)
+        {
+            for (int j = -10; j < 10; ++j)
+            {
+                int scale = 70;
+                Tile tile = ScriptableObject.CreateInstance<Tile>();//创建Tile，注意，要使用这种方式
+                Sprite tmp = Utility.GetSprite(SpriteType.RANDOM_ROAD);
+                tile.sprite = tmp;
+                tilemap.SetTile(new Vector3Int(i*scale,j*scale,0),tile); 
+            }
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-
         successTitle.SetActive(false);
         failTitle.SetActive(false);
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
+        if (model.enableUIVer2)
+        {
+            PaintBackground();
+        }
         NTimer = new InfectedTimer(model.timerStagePeriod);
         CTimer = new InfectedTimer(model.timerStagePeriod);
         NTimer.AddStage(InfectedStage.stages[0]);

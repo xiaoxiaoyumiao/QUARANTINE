@@ -61,6 +61,11 @@ public class VirusModel : MonoBehaviour
 
     // set this flag to true if you want to see all infected
     public bool enableGodView = false;
+
+    [Header("Others")]
+    // set this flag to true if you want to use UI version 2
+    // UI version 1 for False
+    public bool enableUIVer2 = true;
     
     // Start is called before the first frame update
     void Start()

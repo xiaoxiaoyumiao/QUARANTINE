@@ -78,6 +78,12 @@ public class Card : MonoBehaviour
 
     private void OnGUI()
     {
+        if (Utility.GetVirusModel().enableUIVer2)
+        {
+            SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+            sr.sprite = Utility.GetSprite(SpriteType.CARD);
+
+        }
         foreach (Text i in this.GetComponentInChildren<Canvas>().GetComponentsInChildren<Text>())
         {
             switch (i.name)

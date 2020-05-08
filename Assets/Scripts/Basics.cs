@@ -22,6 +22,18 @@ public enum BlockType
     QUARANTINE = 4
 }
 
+public enum SpriteType
+{
+    ERROR = 0,
+    HOUSING = 1,
+    FACTORY_WORKING = 2,
+    FACTORY_CLOSED = 3,
+    HOSPITAL = 4,
+    QUARANTINE = 5,
+    CARD = 16,
+    RANDOM_ROAD = 32
+}
+
 public class Utility
 {
     public static int AdaptedRandomNumber(float ratio, int total)
@@ -52,6 +64,50 @@ public class Utility
         }
         return model;
     }
+
+    private static Dictionary<string, Sprite> sprites = null;
+    public static Sprite GetSprite(SpriteType type)
+    {
+        if (sprites == null)
+        {
+            sprites = new Dictionary<string, Sprite>();
+            string[] names = new string[]{"FACTORY", "C_FACTORY", "HOSPITAL",
+                                    "HOUSE","Q_HOUSE", "CARD",
+                                    "ROAD01","ROAD02","ROAD03"};
+            string directory = "UI2/{0}";
+            foreach (string ele in names)
+            {
+                Object pref = Resources.Load(string.Format(directory, ele), typeof(Sprite));
+                Sprite tmp = GameObject.Instantiate(pref) as Sprite;
+                sprites.Add(ele, tmp);
+            }
+        }
+
+        switch (type)
+        {
+            case SpriteType.HOSPITAL:
+                return sprites["HOSPITAL"];
+            case SpriteType.FACTORY_WORKING:
+                return sprites["FACTORY"];
+            case SpriteType.FACTORY_CLOSED:
+                return sprites["C_FACTORY"];
+            case SpriteType.HOUSING:
+                return sprites["HOUSE"];
+            case SpriteType.QUARANTINE:
+                return sprites["Q_HOUSE"];
+            case SpriteType.CARD:
+                return sprites["CARD"];
+            case SpriteType.RANDOM_ROAD:
+                int p = Random.Range(0, 3);
+                // if (p == 0) return sprites["ROAD01"];
+                if (p == 0) return sprites["ROAD02"];
+                else if (p == 1) return sprites["ROAD02"];
+                else return sprites["ROAD03"];
+            default: // should be a error placeholder
+                return null;
+        }
+    }
+    
 }
 
 /// <summary>
@@ -333,6 +389,7 @@ public class Block
                         break;
                     }
             }
+            blockUI.GetComponent<Landblock>().UpdateSprite();
         }
     }
     public GameObject blockUI;
@@ -463,6 +520,8 @@ public class Block
         if (type == BlockType.HOSPITAL)
             CIPCount.priority = 20.0f;
 
+        lb.UpdateSprite();
+
     }
 
     public void AddOutBlock(Block target)
@@ -516,6 +575,7 @@ public class Block
     public int StopWorking()
     {
         isWorking = false;
+        blockUI.GetComponent<Landblock>().UpdateSprite();
         return 0;
     }
     public int StartWorking()
@@ -523,6 +583,7 @@ public class Block
         if (type == BlockType.FACTORY)
         {
             isWorking = true;
+            blockUI.GetComponent<Landblock>().UpdateSprite();
             return 0;
         } else
         {
