@@ -54,9 +54,9 @@ public class Landscape : MonoBehaviour
     {
         Tilemap tilemap = GameObject.FindGameObjectWithTag("Background").GetComponent<Tilemap>();
         tilemap.ClearAllTiles();
-        for (int i= -10;i<10; ++i)
+        for (int i= -10;i<13; ++i)
         {
-            for (int j = -10; j < 10; ++j)
+            for (int j = -10; j < 13; ++j)
             {
                 int scale = 70;
                 Tile tile = ScriptableObject.CreateInstance<Tile>();//创建Tile，注意，要使用这种方式

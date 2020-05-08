@@ -78,13 +78,50 @@ public class Card : MonoBehaviour
 
     private void OnGUI()
     {
+        Canvas[] cvs = GetComponentsInChildren<Canvas>(true);
+        Canvas cv = null;
+        string name = "Canvas";
         if (Utility.GetVirusModel().enableUIVer2)
+        {
+            name = "CanvasVer2";
+        }
+        foreach (Canvas ele in cvs)
+        {
+            if (ele.name == name)
+            {
+                ele.gameObject.SetActive(true);
+                cv = ele;
+            } else
+            {
+                ele.gameObject.SetActive(false);
+            }
+        }
+        if (cv == null) return;
+        if (name == "CanvasVer2")
         {
             SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
             sr.sprite = Utility.GetSprite(SpriteType.CARD);
+            Image icon = cv.GetComponentInChildren<Image>();
+            icon.sprite = Utility.GetSprite(Utility.CardToSpriteType(type));
 
+            foreach (Text i in cv.GetComponentsInChildren<Text>())
+            {
+                switch (i.name)
+                {
+                    case "costUI":
+                        i.text = cost.ToString();
+                        i.fontSize = 14;
+                        break;
+                    case "Title":
+                        i.text = cardName;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return;
         }
-        foreach (Text i in this.GetComponentInChildren<Canvas>().GetComponentsInChildren<Text>())
+        foreach (Text i in cv.GetComponentsInChildren<Text>())
         {
             switch (i.name)
             {

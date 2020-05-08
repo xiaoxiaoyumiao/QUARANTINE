@@ -31,7 +31,12 @@ public enum SpriteType
     HOSPITAL = 4,
     QUARANTINE = 5,
     CARD = 16,
-    RANDOM_ROAD = 32
+    CARD_AID = 17,
+    CARD_STOP_WORKING = 18,
+    CARD_START_WORKING = 19,
+    CARD_QUARANTINE = 20,
+    CARD_TAX = 21,  
+    RANDOM_ROAD = 128
 }
 
 public class Utility
@@ -65,6 +70,19 @@ public class Utility
         return model;
     }
 
+    public static SpriteType CardToSpriteType(CardType type)
+    {
+        switch (type)
+        {
+            case CardType.QUARANTINE: return SpriteType.CARD_QUARANTINE;
+            case CardType.SPECIAL_AID: return SpriteType.CARD_AID;
+            case CardType.START_WORKING: return SpriteType.CARD_START_WORKING;
+            case CardType.STOP_WORKING: return SpriteType.CARD_STOP_WORKING;
+            case CardType.TAXING: return SpriteType.CARD_TAX;
+            default: return SpriteType.ERROR;
+        }
+    }
+
     private static Dictionary<string, Sprite> sprites = null;
     public static Sprite GetSprite(SpriteType type)
     {
@@ -80,6 +98,18 @@ public class Utility
                 Object pref = Resources.Load(string.Format(directory, ele), typeof(Sprite));
                 Sprite tmp = GameObject.Instantiate(pref) as Sprite;
                 sprites.Add(ele, tmp);
+            }
+            directory = "UI2/CARDS/CARD_{0}";
+            string[] cards = new string[]{"AID","QUARANTINE","START_WORKING","STOP_WORKING","TAX" };
+            foreach (string ele in cards)
+            {
+                Object pref = Resources.Load(string.Format(directory, ele), typeof(Sprite));
+                if (pref == null)
+                {
+                    Debug.Log(string.Format(directory, ele));
+                }
+                Sprite tmp = GameObject.Instantiate(pref) as Sprite;
+                sprites.Add("CARD_"+ele, tmp);
             }
         }
 
@@ -103,6 +133,16 @@ public class Utility
                 if (p == 0) return sprites["ROAD02"];
                 else if (p == 1) return sprites["ROAD02"];
                 else return sprites["ROAD03"];
+            case SpriteType.CARD_AID:
+                return sprites["CARD_AID"];
+            case SpriteType.CARD_QUARANTINE:
+                return sprites["CARD_QUARANTINE"];
+            case SpriteType.CARD_START_WORKING:
+                return sprites["CARD_START_WORKING"];
+            case SpriteType.CARD_STOP_WORKING:
+                return sprites["CARD_STOP_WORKING"];
+            case SpriteType.CARD_TAX:
+                return sprites["CARD_TAX"];
             default: // should be a error placeholder
                 return null;
         }
