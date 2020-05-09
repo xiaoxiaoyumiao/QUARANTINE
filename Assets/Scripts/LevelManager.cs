@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class LevelManager : MonoBehaviour
         }
     }
     List<LevelInfo> levels = new List<LevelInfo>();
-    LevelInfo selectedLevel;
+    public static string selectedLevel;
 
     public int RegisterLevel(LevelBlock level)
     {
@@ -35,7 +36,8 @@ public class LevelManager : MonoBehaviour
 
     public void OnLevelClicked(int index)
     {
-        selectedLevel = levels[index];
+        selectedLevel = levels[index].sceneName;
+        SceneManager.LoadScene("Progressing");
     }
 
     // Start is called before the first frame update

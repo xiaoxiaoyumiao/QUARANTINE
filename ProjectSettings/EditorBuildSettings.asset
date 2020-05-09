@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Welcome.unity
     guid: 662709ba0f96505468a73458556f4149
+  - enabled: 1
+    path: Assets/Scenes/Progressing.unity
+    guid: e954b304d1eb74141811cd7df937cd76
   m_configObjects: {}

@@ -17,6 +17,7 @@ public class LevelBlock : MonoBehaviour
     {
         manager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
         index = manager.RegisterLevel(this);
+        GetComponent<Button>().onClick.AddListener(OnClick);
     }
 
     void OnClick()
