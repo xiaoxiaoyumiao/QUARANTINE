@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class Landscape : MonoBehaviour
@@ -11,6 +12,12 @@ public class Landscape : MonoBehaviour
     [Header("Title")]
     public GameObject successTitle;
     public GameObject failTitle;
+
+    public GameObject gameOverDialog;
+    private Button functionButton;
+    private Button returnButton;
+    private Text scoreInfo;
+    private Text functionText;
 
     [Header("condition")]
     public int failLimitedTime;
@@ -50,6 +57,9 @@ public class Landscape : MonoBehaviour
     // GUI related parameters, used in OnGUI()
     GUIStyle materialStyle = new GUIStyle();    
 
+    /* Initialization section 
+     * following functions are for initialization when the level is started.
+     */
     void PaintBackground()
     {
         Tilemap tilemap = GameObject.FindGameObjectWithTag("Background").GetComponent<Tilemap>();
@@ -67,11 +77,32 @@ public class Landscape : MonoBehaviour
         }
     }
 
+    GameObject GetCanvasObject(string range, string path)
+    {
+        if (range == "GameOver")
+        {
+            return GameObject.Find("Canvas/GameOverBackground/GameOverDialog/" + path);
+        }
+        return null;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        successTitle = GameObject.Find("text/success");
+        failTitle = GameObject.Find("text/fail");
+        gameOverDialog = GameObject.Find("Canvas/GameOverBackground");
+        functionButton = GetCanvasObject("GameOver", "Functional").GetComponent<Button>();
+        returnButton = GetCanvasObject("GameOver", "Return").GetComponent<Button>();
+        scoreInfo = GetCanvasObject("GameOver", "Score").GetComponent<Text>();
+        functionText = GetCanvasObject("GameOver", "Functional/Text").GetComponent<Text>();
+
+        functionButton.onClick.AddListener(OnFunctional);
+        returnButton.onClick.AddListener(OnReturn);
+
         successTitle.SetActive(false);
         failTitle.SetActive(false);
+        gameOverDialog.SetActive(false);
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)
@@ -122,25 +153,79 @@ public class Landscape : MonoBehaviour
         materialStyle.fontSize = 30;
     }
 
-    public void UpdateTotalMaterialCount()
+    /* Trigger section 
+     * Functions below are for event dispatching and handling.
+     * Events can be mouse/keyboard input, card selection, button behavior, etc.
+     */
+
+    void OnGameOver()
     {
-        totalMaterialCount = 0;
-        if (Utility.GetVirusModel().autoGlobalTaxing)
+        if (gameState != GameState.SUCCESS && gameState != GameState.FAILURE)
+            return; // happen?
+        /* TODO: handle with score recording. 
+         * It should be directly written to local files  */
+        int score = totalMaterialCount;
+        if (gameState == GameState.FAILURE) score = 0;
+        if (Utility.GetVirusModel().enableUIVer2)
         {
-            foreach (Block block in blocks)
+            if (gameState == GameState.SUCCESS)
             {
-                playerMaterialCount += block.TaxAll();
+                functionText.text = "Next Level";
             }
+            else
+            {
+                functionText.text = "Try Again";
+            }
+            scoreInfo.text = string.Format("score: {0}", score);
+            gameOverDialog.SetActive(true);
             return;
         }
-        
-        foreach (Block block in blocks)
+        if (gameState == GameState.SUCCESS)
         {
-            totalMaterialCount += block.MaterialCount.Data;
+            successTitle.SetActive(true);
+            failTitle.SetActive(false);
         }
-
+        else if (gameState == GameState.FAILURE)
+        {
+            successTitle.SetActive(false);
+            failTitle.SetActive(true);
+        }
     }
 
+    public void OnFunctional()
+    {
+        if (gameState == GameState.SUCCESS)
+        {
+            OnNextLevel();
+        }
+        else if (gameState == GameState.FAILURE)
+        {
+            OnRetry();
+        }
+    }
+
+    // for going to the next level
+    public void OnNextLevel()
+    {
+        Debug.Log("New levels coming soon");
+        SceneManager.LoadScene("SelectLevel");
+    }
+        
+    // for restarting the level
+    public void OnRetry()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        LevelManager.selectedLevel = scene.name;
+        SceneManager.LoadScene("Progressing");
+    }
+
+    // for returning to the level selecting scene
+    public void OnReturn()
+    {
+        /* TODO:  Maybe there should be a confirm dialog... */
+        SceneManager.LoadScene("SelectLevel");
+    }
+         
     public void BlockClicked(GameObject obj)
     {
         selected = obj;
@@ -152,7 +237,6 @@ public class Landscape : MonoBehaviour
     {
 
     }
-
 
     public int CardEventDispatched(Card card)
     {
@@ -215,6 +299,29 @@ public class Landscape : MonoBehaviour
         return 0;
     }
 
+
+    /* Iteration section 
+     * Functions below are for data iterations every round.
+     */
+    public void UpdateTotalMaterialCount()
+    {
+        totalMaterialCount = 0;
+        if (Utility.GetVirusModel().autoGlobalTaxing)
+        {
+            foreach (Block block in blocks)
+            {
+                playerMaterialCount += block.TaxAll();
+            }
+            return;
+        }
+
+        foreach (Block block in blocks)
+        {
+            totalMaterialCount += block.MaterialCount.Data;
+        }
+
+    }
+
     void endRound()
     {
         dayCounter++;
@@ -238,14 +345,17 @@ public class Landscape : MonoBehaviour
 
     // Update is called once per frame
     int counter;
-
-    // 胜利失败条件
-    string CheckSucceedOrFail()
+    // game state, defined in Basics
+    GameState gameState = GameState.RUNNING;
+    // judgment of success and failure
+    GameState CheckSucceedOrFail()
     {
+        if (gameState != GameState.RUNNING)
+            return gameState;
         if (failLimitedTime < 0)
         {
-            failTitle.SetActive(true);
-            return "fail";
+            
+            return GameState.FAILURE;
         }
 
         int healthCnt = 0;
@@ -255,27 +365,26 @@ public class Landscape : MonoBehaviour
         }
         if (healthCnt == 0)
         {
-            successTitle.SetActive(true);
-            return "success";
+            
+            return GameState.SUCCESS;
         }
 
-        return "";
+        return GameState.RUNNING;
     }
 
-    bool gameover = false;
     void Update()
     {
-        counter++;
-        if (gameover)
-            return;
-
-        string s = CheckSucceedOrFail();
-        if(s == "fail" || s == "success")
+        GameState s = gameState;
+        gameState = CheckSucceedOrFail();
+        if (s == GameState.RUNNING && 
+            (gameState == GameState.SUCCESS || gameState == GameState.FAILURE))
         {
-            gameover = true;
+            OnGameOver();
+        }
+        if (gameState != GameState.RUNNING)
             return;
-        } 
 
+        counter++;
         if (counter > 60 * 3)
         {
             endRound();

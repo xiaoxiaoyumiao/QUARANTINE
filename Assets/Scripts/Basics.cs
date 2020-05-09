@@ -39,6 +39,14 @@ public enum SpriteType
     RANDOM_ROAD = 128
 }
 
+public enum GameState
+{
+    RUNNING = 0,
+    SUCCESS = 1,
+    FAILURE = 2,
+    PAUSED  = 3
+}
+
 public class Utility
 {
     public static int AdaptedRandomNumber(float ratio, int total)
