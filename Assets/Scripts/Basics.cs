@@ -47,6 +47,13 @@ public enum GameState
     PAUSED  = 3
 }
 
+public enum UIPath
+{
+    GameOver = 0,
+    SelectedBasic = 1,
+    SelectedSpec = 2
+}
+
 public class Utility
 {
     public static int AdaptedRandomNumber(float ratio, int total)
@@ -78,6 +85,44 @@ public class Utility
         return model;
     }
 
+    public static GameObject GetCanvasObject(UIPath range, string path)
+    {
+        if (range == UIPath.GameOver)
+        {
+            return GameObject.Find("Canvas/GameOverBackground/GameOverDialog/" + path);
+        }
+        else if (range == UIPath.SelectedBasic)
+        {
+            return GameObject.Find("Canvas/BlockPanel/BasicInfo/" + path);
+        }
+        else if (range == UIPath.SelectedSpec)
+        {
+            if (path == "SpecialNote")
+                return GameObject.Find("Canvas/BlockPanel/SpecInfo/" + path);
+            else
+                return GameObject.Find("Canvas/BlockPanel/SpecInfo/StatTags/" + path);
+        }
+        return null;
+    }
+
+    public static T GetCanvasComponent<T>(UIPath range, string path)
+    {
+        return GetCanvasObject(range, path).GetComponent<T>();
+    }
+
+    public static string BlockTypeToString(BlockType type)
+    {
+        string blockType = "";
+        switch (type)
+        {
+            case BlockType.FACTORY: blockType = "工厂"; break;
+            case BlockType.HOSPITAL: blockType = "医院"; break;
+            case BlockType.HOUSING: blockType = "居民区"; break;
+            case BlockType.QUARANTINE: blockType = "隔离区"; break;
+            default: blockType = "无"; break;
+        }
+        return blockType;
+    }
     public static SpriteType CardToSpriteType(CardType type)
     {
         switch (type)
@@ -234,7 +279,8 @@ public class Variable<T> where T: struct
 
 
     public float priority;
-    public List<Variable<T>> outVariables;
+    // public List<Variable<T>> outVariables;
+    public Dictionary<Variable<T>, bool> permitOutVar;
     public static readonly float ZERO = 1e-6f;
     
     public Variable(T mData, VarType mType)
@@ -243,7 +289,8 @@ public class Variable<T> where T: struct
         type = mType;
         dirty = false;
         priority = 0.0f;
-        outVariables = new List<Variable<T>>();
+        // outVariables = new List<Variable<T>>();
+        permitOutVar = new Dictionary<Variable<T>, bool>();
     }
 
     public bool NeedCommit()
@@ -256,9 +303,27 @@ public class Variable<T> where T: struct
         dirty = false;
     }
 
-    public void AddOutVariable(Variable<T> var)
+    public void AddOutVariable(Variable<T> var, bool permission=true)
     {
-        outVariables.Add(var);
+        // outVariables.Add(var);
+        permitOutVar.Add(var, permission);
+    }
+
+    public void RemoveOutVariable(Variable<T> var)
+    {
+        if (permitOutVar.ContainsKey(var))
+        {
+            // outVariables.Remove(var);
+            permitOutVar.Remove(var);
+        }
+    }
+
+    public void SetPermission(Variable<T> var, bool permission)
+    {
+        if (permitOutVar.ContainsKey(var))
+        {
+            permitOutVar[var] = permission;
+        }
     }
 
     public virtual void Broadcast(float ratio, float offset = 0.0f) { }
@@ -279,8 +344,11 @@ public class BroadcastVariableInt : Variable<int>
     {
         List<Variable<int>> finalOuts = new List<Variable<int>>();
         float prioritySum = 0.0f;
-        foreach (Variable<int> ele in outVariables)
+        // foreach (Variable<int> ele in outVariables)
+        foreach (KeyValuePair<Variable<int>, bool> var in permitOutVar)
         {
+            if (var.Value == false) continue;
+            Variable<int> ele = var.Key;
             if (ele.priority < offset) // will be ignored
             {
                 continue;
@@ -297,7 +365,7 @@ public class BroadcastVariableInt : Variable<int>
         int outSum = delta;
         foreach (Variable<int> ele in finalOuts)
         {
-            int alloc = (int)(delta * ((ele.priority+1) / prioritySum));
+            int alloc = (int)(delta * ((1+ele.priority) / prioritySum));
             if (outSum < alloc) alloc = outSum;
             ele.DataBuf += alloc;
             outSum -= alloc;
@@ -445,7 +513,8 @@ public class Block
 
     /* material related */
 
-    public bool isWorking = false;
+    bool isWorking = false;
+    public bool IsWorking { get { return isWorking;  } }
     public float MCRate
     {
         get
@@ -508,9 +577,43 @@ public class Block
         }
     }
 
-    public Variable<int> HPCount;       // Healthy Population
-    public Variable<int> CIPCount;      // Current generation of Infected Population
-    public Variable<int> NIPCount;      // Next generation of Infected Population
+    public Dictionary<VarType, Variable<int>> variables;
+
+    public Variable<int> HPCount       // Healthy Population
+    {
+        get
+        {
+            return variables[VarType.HEALTHY_POP];
+        }
+        set
+        {
+            variables[VarType.HEALTHY_POP] = value;
+        }
+    }
+
+    public Variable<int> CIPCount      // Current generation of Infected Population
+    {
+        get
+        {
+            return variables[VarType.INFECTED_POP_CURR_GEN];
+        }
+        set
+        {
+            variables[VarType.INFECTED_POP_CURR_GEN] = value;
+        }
+    }
+
+    public Variable<int> NIPCount      // Next generation of Infected Population
+    {
+        get
+        {
+            return variables[VarType.INFECTED_POP_NEXT_GEN];
+        }
+        set
+        {
+            variables[VarType.INFECTED_POP_NEXT_GEN] = value;
+        }
+    }
 
     // Virus_{k+1} = ( Virus_{k} + VIRUS_SCALING * (NIP + CIP) ) * VIRUS_DECAY
     // VIRUS_R_FACTOR = AMPLITUDE * F( Virus * GRADIENT )
@@ -523,17 +626,86 @@ public class Block
             return (float)(model.virusAmplitude * System.Math.Atan(VirusCount.Data * model.virusGradient * 12 ));
         }
     }
-    public Variable<int> VirusCount;    // Simulation of spreading trace of virus
+    public Variable<int> VirusCount    // Simulation of spreading trace of virus
+    {
+        get
+        {
+            return variables[VarType.VIRUS_COUNT];
+        }
+        set
+        {
+            variables[VarType.VIRUS_COUNT] = value;
+        }
+    }
 
-    public Variable<int> MaterialCount; // Material count
+    public Variable<int> MaterialCount // Material count
+    {
+        get
+        {
+            return variables[VarType.MATERIAL];
+        }
+        set
+        {
+            variables[VarType.MATERIAL] = value;
+        }
+    }
+
+    public Variable<int> GetVariableOfType(VarType type)
+    {
+        return variables[type];
+    }
 
     public void Commit()
     {
-        HPCount.Commit();
-        CIPCount.Commit();
-        NIPCount.Commit();
-        VirusCount.Commit();
-        MaterialCount.Commit();
+        foreach (KeyValuePair<VarType, Variable<int>> pair in variables)
+        {
+            pair.Value.Commit();
+        }
+    }
+
+    public void AddOutBlock(Block target)
+    {
+        if (outBlocks.Contains(target)) return;
+        outBlocks.Add(target);
+        foreach (KeyValuePair<VarType, Variable<int>> pair in variables)
+        {
+            pair.Value.AddOutVariable(target.GetVariableOfType(pair.Key));
+        }
+    }
+
+    // WARNING: it's recommended to change permission of block data exchanging
+    // while keeping topology of block graph static. Call this judiciously.
+    public void RemoveOutBlock(Block target)
+    {
+        if (outBlocks.Remove(target))
+        {
+            foreach (KeyValuePair<VarType, Variable<int>> pair in variables)
+            {
+                pair.Value.RemoveOutVariable(target.GetVariableOfType(pair.Key));
+            }
+        }
+    }
+
+    public void SetPermission(Block target, bool permission, VarType type = VarType.NONE)
+    {
+        if (type == VarType.NONE)
+        {
+            foreach (KeyValuePair<VarType, Variable<int>> pair in variables)
+            {
+                pair.Value.SetPermission(target.GetVariableOfType(pair.Key), permission);
+            }          
+        }
+    }
+
+    public void VarIntInit(int data, VarType type)
+    {
+        // variable = new BroadcastVariableInt(data, type);
+        variables[type] = new BroadcastVariableInt(data, type);
+        Variable<int> variable = GetVariableOfType(type);
+        foreach (Block block in outBlocks) // needed? outBlocks is empty here
+        {
+            variable.AddOutVariable(block.GetVariableOfType(type));
+        }
     }
 
     public Block(GameObject mBlockUI)
@@ -545,9 +717,10 @@ public class Block
         blockUI = mBlockUI;
         Landblock lb = blockUI.GetComponent<Landblock>();
         type = lb.type;
-        
+
         lb.block = this;
         outBlocks = new List<Block>();
+        variables = new Dictionary<VarType, Variable<int>>();
 
         NTimer = scape.NTimer;
         CTimer = scape.CTimer;
@@ -555,11 +728,11 @@ public class Block
         if (model.randomPopulation)
             lb.population = Random.Range(model.randomPopulationMin, model.randomPopulationMax);
 
-        VarIntInit(ref HPCount, lb.population, VarType.HEALTHY_POP);
-        VarIntInit(ref CIPCount, 0, VarType.INFECTED_POP_CURR_GEN);
-        VarIntInit(ref NIPCount, lb.infected, VarType.INFECTED_POP_NEXT_GEN);
-        VarIntInit(ref MaterialCount, lb.material, VarType.MATERIAL);
-        VarIntInit(ref VirusCount, lb.virus, VarType.VIRUS_COUNT);
+        VarIntInit(lb.population, VarType.HEALTHY_POP);
+        VarIntInit(0, VarType.INFECTED_POP_CURR_GEN);
+        VarIntInit(lb.infected, VarType.INFECTED_POP_NEXT_GEN);
+        VarIntInit(lb.material, VarType.MATERIAL);
+        VarIntInit(lb.virus, VarType.VIRUS_COUNT);
 
         /* block type specific */
         if (type == BlockType.FACTORY)
@@ -570,53 +743,6 @@ public class Block
 
         lb.UpdateSprite();
 
-    }
-
-    public void AddOutBlock(Block target)
-    {
-        outBlocks.Add(target);
-        HPCount.AddOutVariable(target.HPCount);
-        CIPCount.AddOutVariable(target.CIPCount);
-        NIPCount.AddOutVariable(target.NIPCount);
-        MaterialCount.AddOutVariable(target.MaterialCount);
-
-    }
-
-    public void VarIntInit(ref Variable<int> variable, int data, VarType type)
-    {
-        variable = new BroadcastVariableInt(data, type);
-        foreach (Block block in outBlocks)
-        {
-            switch (type)
-            {
-                case VarType.HEALTHY_POP:
-                    {
-                        variable.AddOutVariable(block.HPCount);
-                        break;
-                    }
-                case VarType.INFECTED_POP_CURR_GEN:
-                    {
-                        variable.AddOutVariable(block.CIPCount);
-                        break;
-                    }
-                case VarType.INFECTED_POP_NEXT_GEN:
-                    {
-                        variable.AddOutVariable(block.NIPCount);
-                        break;
-                    }
-                case VarType.MATERIAL:
-                    {
-                        variable.AddOutVariable(block.MaterialCount);
-                        break;
-                    }
-                case VarType.VIRUS_COUNT:
-                    {
-                        variable.AddOutVariable(block.VirusCount);
-                        break;
-                    }
-                default: break;
-            }
-        }
     }
 
     /* 以下方法段是一些与父对象互动的工具方法 */
@@ -669,12 +795,15 @@ public class Block
 
     int QUARANTINE_PERIOD = -1;
     bool isQuarantined;
+    public bool IsQuarantined { get { return isQuarantined;  } }
+
     int quarantineCounter;
+    public int QuarantineCounter { get { return quarantineCounter;  } }
     public int Quarantined(int period)
     {
         isQuarantined = true;
         QUARANTINE_PERIOD = period;
-        quarantineCounter = 0;
+        quarantineCounter = period;
         return 0;
     }
 
@@ -684,6 +813,17 @@ public class Block
         CIPCount.Data = 0;
         NIPCount.Data = 0;
         return 0;
+    }
+
+    int lastConsumedMaterial = 0;
+    public int GetMCost()
+    {
+        return lastConsumedMaterial;
+    }
+    
+    public int GetVirusCount()
+    {
+        return VirusCount.Data;
     }
 
     /* 回合结束时首先执行的块内结算，不涉及与其他块的数据交换 */
@@ -711,7 +851,8 @@ public class Block
         NIPCount.Data -= death;
 
         /* material update */
-        MaterialCount.Data += (int)System.Math.Floor(MCRate*(HPCount.Data+CIPCount.Data));
+        lastConsumedMaterial = (int)System.Math.Floor(MCRate*(HPCount.Data+CIPCount.Data));
+        MaterialCount.Data += lastConsumedMaterial;
         if (!(model.autoGlobalTaxing) && MaterialCount.Data < RESOURCE_MIN)
             MaterialCount.Data = RESOURCE_MIN;
     }
@@ -721,8 +862,8 @@ public class Block
     {
         if (isQuarantined)
         {
-            quarantineCounter += 1;
-            if (quarantineCounter == QUARANTINE_PERIOD)
+            quarantineCounter -= 1;
+            if (quarantineCounter == 0)
             {
                 isQuarantined = false;
             }

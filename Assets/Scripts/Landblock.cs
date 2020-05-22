@@ -113,7 +113,7 @@ public class Landblock : MonoBehaviour
                     sprite = Utility.GetSprite(SpriteType.HOSPITAL);
                     break;
                 case BlockType.FACTORY:
-                    if (block.isWorking) sprite = Utility.GetSprite(SpriteType.FACTORY_WORKING);
+                    if (block.IsWorking) sprite = Utility.GetSprite(SpriteType.FACTORY_WORKING);
                     else sprite = Utility.GetSprite(SpriteType.FACTORY_CLOSED);
                     break;
                 case BlockType.HOUSING:

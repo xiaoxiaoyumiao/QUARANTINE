@@ -18,6 +18,7 @@ public class Landscape : MonoBehaviour
     private Button returnButton;
     private Text scoreInfo;
     private Text functionText;
+    private GameObject blockPanel;
 
     [Header("condition")]
     public int failLimitedTime;
@@ -77,25 +78,17 @@ public class Landscape : MonoBehaviour
         }
     }
 
-    GameObject GetCanvasObject(string range, string path)
-    {
-        if (range == "GameOver")
-        {
-            return GameObject.Find("Canvas/GameOverBackground/GameOverDialog/" + path);
-        }
-        return null;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
         successTitle = GameObject.Find("text/success");
         failTitle = GameObject.Find("text/fail");
         gameOverDialog = GameObject.Find("Canvas/GameOverBackground");
-        functionButton = GetCanvasObject("GameOver", "Functional").GetComponent<Button>();
-        returnButton = GetCanvasObject("GameOver", "Return").GetComponent<Button>();
-        scoreInfo = GetCanvasObject("GameOver", "Score").GetComponent<Text>();
-        functionText = GetCanvasObject("GameOver", "Functional/Text").GetComponent<Text>();
+        blockPanel = GameObject.Find("Canvas/BlockPanel");
+        functionButton = Utility.GetCanvasComponent<Button>(UIPath.GameOver, "Functional");
+        returnButton = Utility.GetCanvasComponent<Button>(UIPath.GameOver, "Return");
+        scoreInfo = Utility.GetCanvasComponent<Text>(UIPath.GameOver, "Score");
+        functionText = Utility.GetCanvasComponent<Text>(UIPath.GameOver, "Functional/Text");
 
         functionButton.onClick.AddListener(OnFunctional);
         returnButton.onClick.AddListener(OnReturn);
@@ -103,6 +96,8 @@ public class Landscape : MonoBehaviour
         successTitle.SetActive(false);
         failTitle.SetActive(false);
         gameOverDialog.SetActive(false);
+
+        blockPanel.SetActive(false);
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)
@@ -228,14 +223,16 @@ public class Landscape : MonoBehaviour
          
     public void BlockClicked(GameObject obj)
     {
-        selected = obj;
-        Debug.Log(obj.name);
+        if (selected == obj)
+            selected = null;
+        else
+            selected = obj;
         BroadcastMessage("UpdateSelected", obj); 
     }
 
     public void OperateBlock(Block block)
     {
-
+        Debug.Log("what? I'm called?");
     }
 
     public int CardEventDispatched(Card card)
@@ -354,7 +351,6 @@ public class Landscape : MonoBehaviour
             return gameState;
         if (failLimitedTime < 0)
         {
-            
             return GameState.FAILURE;
         }
 
@@ -405,6 +401,34 @@ public class Landscape : MonoBehaviour
         GameObject.Find("Canvas/Panel/TaxUI").GetComponent<Text>().text = "政府资源：" + playerMaterialCount;
         GameObject.Find("Canvas/Panel/DayUI").GetComponent<Text>().text = "天数：" + dayCounter;
         GameObject.Find("Canvas/Panel/TimerUI").GetComponent<Text>().text = "病毒升级倒计时：" + NTimer.countdown;
+
+        if (selected == null)
+        {
+            blockPanel.SetActive(false);
+            return;
+        }
+
+        blockPanel.SetActive(true);
+
+        Block block = selected.GetComponent<Landblock>().block;
+        string blockType = Utility.BlockTypeToString(block.type);
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "BlockType").text = "类型：" + blockType;
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "POPCount").text = "总人口：" + block.GetTotalPopulation().ToString();
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "CPCount").text = "感染者：" + block.GetConfirmedInfectedPopulation().ToString();
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "MCost").text = "资源消耗：" + Mathf.Abs(block.GetMCost()).ToString();
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "VirusCount").text = "病原体浓度：" + block.GetVirusCount().ToString();
+
+
+        Utility.GetCanvasObject(UIPath.SelectedSpec, "Quarantine").SetActive(block.IsQuarantined);
+        Utility.GetCanvasObject(UIPath.SelectedSpec, "StopWorking").SetActive(block.type == BlockType.FACTORY && !block.IsWorking);
+
+        string specialNote = "";
+        if (block.IsQuarantined)
+            specialNote += "隔离期结束还有" + block.QuarantineCounter + "天";
+
+        Utility.GetCanvasComponent<Text>(UIPath.SelectedSpec, "SpecialNote").text = specialNote;
+
+        
     }
 
     // temorarily deprecated
