@@ -27,7 +27,7 @@ public class LinePainter : MonoBehaviour
         }
     }
 
-    LineRenderer renderer;
+    LineRenderer myRenderer;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +47,6 @@ public class LinePainter : MonoBehaviour
     {
         GameObject line = new GameObject();
         line.transform.parent = transform;
-        renderer = line.AddComponent<LineRenderer>();
+        myRenderer = line.AddComponent<LineRenderer>();
     }
 }

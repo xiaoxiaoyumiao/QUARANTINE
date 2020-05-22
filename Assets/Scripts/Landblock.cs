@@ -39,6 +39,10 @@ public class Landblock : MonoBehaviour
     GUIStyle HPStyle;
     GUIStyle IPStyle;
     GUIStyle MStyle;
+
+    GameObject canvas1;
+    GameObject canvas2;
+
     
     // Start is called before the first frame update
     void Start()
@@ -51,6 +55,16 @@ public class Landblock : MonoBehaviour
         IPStyle.normal.textColor = Color.red;
         MStyle = new GUIStyle();
         MStyle.normal.textColor = Color.green;
+
+        var canvases = this.GetComponentsInChildren<Canvas>();
+        foreach (var ele in canvases)
+        {
+            if (ele.name == "Canvas") canvas1 = ele.gameObject;
+            else canvas2 = ele.gameObject;
+        }
+        canvas1.SetActive(false);
+        canvas2.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -139,7 +153,48 @@ public class Landblock : MonoBehaviour
             GUI.Label(new Rect(Input.mousePosition.x, Screen.height-Input.mousePosition.y-15, 30, 30), block.HPCount.Data.ToString(),HPStyle);
         }
         if (block == null) return;
-        foreach (Text i in this.GetComponentInChildren<Canvas>().GetComponentsInChildren<Text>())
+
+        if (Utility.GetVirusModel().enableHealthBar)
+        {
+            canvas2.SetActive(true);
+            float volume = block.parameter.POPULATION_VOLUME;
+
+            float hpval = 0, ipval = 0;
+            if (Utility.GetVirusModel().enableGodView)
+                hpval = block.HPCount.Data;
+            else
+                hpval = (block.HPCount.Data + block.NIPCount.Data);
+
+            if (hpval > volume) hpval = volume;
+
+            if (Utility.GetVirusModel().enableGodView)
+                ipval = (block.CIPCount.Data + block.NIPCount.Data);
+            else
+                ipval = block.CIPCount.Data;
+
+            if (ipval > volume) ipval = volume;
+
+            foreach (Transform tr in canvas2.transform)
+            {
+                Vector3 scale = tr.localScale;
+                switch (tr.name)
+                {
+                    case "TotalPop":
+                        scale.x = hpval / volume;
+                        tr.localScale = scale;
+                        break;
+                    case "InfectedPop":
+                        scale.x = ipval / volume;
+                        tr.localScale = scale;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return;
+        }
+        canvas1.SetActive(true);
+        foreach (Text i in canvas1.GetComponentsInChildren<Text>())
         {
             switch (i.name)
             {

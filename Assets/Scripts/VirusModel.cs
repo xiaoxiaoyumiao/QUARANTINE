@@ -66,6 +66,9 @@ public class VirusModel : MonoBehaviour
     // set this flag to true if you want to use UI version 2
     // UI version 1 for False
     public bool enableUIVer2 = true;
+
+    // set this flag to true if you want to display data as health bar
+    public bool enableHealthBar = true;
     
     // Start is called before the first frame update
     void Start()
