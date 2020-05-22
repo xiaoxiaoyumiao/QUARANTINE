@@ -4390,7 +4390,7 @@ MonoBehaviour:
   successTitle: {fileID: 200143514}
   failTitle: {fileID: 2098545525}
   gameOverDialog: {fileID: 0}
-  failLimitedTime: 100
+  failLimitedTime: 60
   quarantineCard: {fileID: 977180414}
   stopWorkingCard: {fileID: 287875265}
   startWorkingCard: {fileID: 1349146333}
