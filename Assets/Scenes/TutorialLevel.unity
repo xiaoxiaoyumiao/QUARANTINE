@@ -235,6 +235,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 0f419eafdb5326f48ac90a1cdaa8ecd2,
         type: 3}
+    - target: {fileID: 336294809118708545, guid: e9e385188d777fa43a2a2f749d13c4ce,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 336294809118708545, guid: e9e385188d777fa43a2a2f749d13c4ce,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 336294809118708545, guid: e9e385188d777fa43a2a2f749d13c4ce,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 335176755704141926, guid: e9e385188d777fa43a2a2f749d13c4ce,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -244,6 +259,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.00025177002
+      objectReference: {fileID: 0}
+    - target: {fileID: 61439640009862024, guid: e9e385188d777fa43a2a2f749d13c4ce,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 61439640009862024, guid: e9e385188d777fa43a2a2f749d13c4ce,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9e385188d777fa43a2a2f749d13c4ce, type: 3}
@@ -4134,7 +4159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -32, y: -9.6}
+  m_AnchoredPosition: {x: -32, y: -9.599998}
   m_SizeDelta: {x: -425.3, y: -62.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1236506855
@@ -4205,7 +4230,7 @@ MonoBehaviour:
   successTitle: {fileID: 200143514}
   failTitle: {fileID: 2098545525}
   gameOverDialog: {fileID: 0}
-  failLimitedTime: 5
+  failLimitedTime: 100
   quarantineCard: {fileID: 977180414}
   stopWorkingCard: {fileID: 287875265}
   startWorkingCard: {fileID: 1349146333}
@@ -6654,7 +6679,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 149.7, y: -9.6}
+  m_AnchoredPosition: {x: 149.7, y: -9.599998}
   m_SizeDelta: {x: -421.7, y: -62.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984721714
