@@ -840,7 +840,8 @@ public class Block
             CIPCount.Data = NIPCount.Data;
             NIPCount.Data = 0;
         }
-        int inf = (int)(CIPCount.Data * CR0 + NIPCount.Data * NR0);
+        //int inf = (int)((CIPCount.Data * CR0 + NIPCount.Data * NR0) * HPCount.Data / (CIPCount.Data + NIPCount.Data + HPCount.Data + 1)); //与健康人数成反比
+        int inf = (int)((CIPCount.Data * CR0) * HPCount.Data / (CIPCount.Data + NIPCount.Data + HPCount.Data + 1)); //不考虑潜伏期的影响
         if (inf > HPCount.Data) inf = HPCount.Data;
         NIPCount.Data += inf;
         HPCount.Data -= inf;
