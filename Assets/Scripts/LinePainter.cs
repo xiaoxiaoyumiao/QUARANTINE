@@ -20,12 +20,14 @@ public class LinePainter : MonoBehaviour
                 foreach (var ele in landblocks)
                 {
                     blocks.Add(ele.GetComponent<Landblock>().block);
-                }    
+                }
             }
             return blocks;
 
         }
     }
+
+    LineRenderer renderer;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +45,8 @@ public class LinePainter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        GameObject line = new GameObject();
+        line.transform.parent = transform;
+        renderer = line.AddComponent<LineRenderer>();
     }
 }

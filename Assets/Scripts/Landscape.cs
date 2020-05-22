@@ -159,7 +159,7 @@ public class Landscape : MonoBehaviour
             return; // happen?
         /* TODO: handle with score recording. 
          * It should be directly written to local files  */
-        int score = totalMaterialCount;
+        int score = playerMaterialCount;
         if (gameState == GameState.FAILURE) score = 0;
         if (Utility.GetVirusModel().enableUIVer2)
         {
