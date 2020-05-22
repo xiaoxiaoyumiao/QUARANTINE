@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4592911115501195689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4592911115501195671}
+  - component: {fileID: 4592911115501195670}
+  - component: {fileID: 4592911115501195668}
+  m_Layer: 0
+  m_Name: LandScapeManager
+  m_TagString: GameController
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4592911115501195671
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4592911115501195689}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4592911115501195670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4592911115501195689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f17cdfce02e85924f91122e0c839c4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  successTitle: {fileID: 0}
+  failTitle: {fileID: 0}
+  gameOverDialog: {fileID: 0}
+  failLimitedTime: 5
+  quarantineCard: {fileID: 0}
+  stopWorkingCard: {fileID: 0}
+  startWorkingCard: {fileID: 0}
+  aidCard: {fileID: 0}
+  taxingCard: {fileID: 0}
+  blockPrefab: {fileID: 336294809118708546, guid: e9e385188d777fa43a2a2f749d13c4ce,
+    type: 3}
+  landblocks: []
+--- !u!114 &4592911115501195668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4592911115501195689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ed95def1f5d154b98965a817669e8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stages:
+  - reproduction: 0
+    deathRate: 0
+  - reproduction: 1
+    deathRate: 0
+  - reproduction: 1
+    deathRate: 1
+  - reproduction: 1
+    deathRate: 0.5
+  timerStagePeriod: 3
+  virusScaling: 0.1
+  virusDecay: 0.9
+  virusAmplitude: 1
+  virusGradient: 0.01
+  factory:
+    R_FACTOR: 2
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.001
+    PRODUCE_FACTOR: 0.04
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.01
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+    POPULATION_VOLUME: 3500
+  housing:
+    R_FACTOR: 2
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.001
+    PRODUCE_FACTOR: 0.005
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+    POPULATION_VOLUME: 550
+  hospital:
+    R_FACTOR: 0.5
+    D_FACTOR: 0
+    CONSUME_FACTOR: -0.005
+    PRODUCE_FACTOR: -0.005
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 2
+    POPULATION_VOLUME: 1500
+  quarantine:
+    R_FACTOR: 0.5
+    D_FACTOR: 1
+    CONSUME_FACTOR: -0.003
+    PRODUCE_FACTOR: 1
+    TAX_RATE: 0.05
+    HP_MOVE_RATIO: 0.05
+    CIP_MOVE_RATIO: 0.01
+    NIP_MOVE_RATIO: 0.02
+    M_MOVE_RATIO: 0.5
+    VIRUS_MOVE_RATIO: 0.5
+    CIP_PRIORITY_OFFSET: 0
+    POPULATION_VOLUME: 1000000
+  randomPopulation: 0
+  randomPopulationMin: 500
+  randomPopulationMax: 3000
+  autoGlobalTaxing: 1
+  enableVolumeConstraint: 1
+  enableGodView: 0
+  enableUIVer2: 1
