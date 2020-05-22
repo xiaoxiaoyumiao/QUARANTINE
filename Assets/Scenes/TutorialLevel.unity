@@ -4134,7 +4134,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -32, y: -9.6}
+  m_AnchoredPosition: {x: -32, y: -9.599998}
   m_SizeDelta: {x: -425.3, y: -62.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1236506855
@@ -4205,7 +4205,7 @@ MonoBehaviour:
   successTitle: {fileID: 200143514}
   failTitle: {fileID: 2098545525}
   gameOverDialog: {fileID: 0}
-  failLimitedTime: 5
+  failLimitedTime: 50
   quarantineCard: {fileID: 977180414}
   stopWorkingCard: {fileID: 287875265}
   startWorkingCard: {fileID: 1349146333}
@@ -6654,7 +6654,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 149.7, y: -9.6}
+  m_AnchoredPosition: {x: 149.7, y: -9.599998}
   m_SizeDelta: {x: -421.7, y: -62.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984721714
