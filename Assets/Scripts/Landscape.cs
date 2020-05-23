@@ -322,11 +322,40 @@ public class Landscape : MonoBehaviour
     }
 
     int totalDeathToll = 0;
+    bool firstDeath = false;
     public void UpdateDeathToll()
     {
         foreach (Block block in blocks)
         {
             totalDeathToll += block.GetDeathToll();
+        }
+        if (totalDeathToll != 0)
+        {
+            if (firstDeath == false)
+            {
+                noticedEvent.Add("第一位死者出现了");
+            }
+            firstDeath = true;
+        }
+        
+    }
+
+    int totalConfirmed = 0;
+    bool confirmed = false;
+    public void UpdateTotalConfirmed()
+    {
+        totalConfirmed = 0;
+        foreach (Block block in blocks)
+        {
+            totalConfirmed += block.GetConfirmedInfectedPopulation();
+        }
+        if (totalConfirmed != 0)
+        {
+            if (confirmed == false)
+            {
+                noticedEvent.Add("出现第一例感染者");
+            }
+            confirmed = true;
         }
     }
 
@@ -349,6 +378,7 @@ public class Landscape : MonoBehaviour
         }
         UpdateTotalMaterialCount();
         UpdateDeathToll();
+        UpdateTotalConfirmed();
     }
     
 
@@ -407,12 +437,20 @@ public class Landscape : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha5)) { CardEventDispatched(taxingCard); }
     }
 
+    List<string> noticedEvent = new List<string>();
+
     private void OnGUI()
     {
         GameObject.Find("Canvas/Panel/ResourceUI").GetComponent<Text>().text = "死亡人数：" + totalDeathToll;
         GameObject.Find("Canvas/Panel/TaxUI").GetComponent<Text>().text = "政府资源：" + playerMaterialCount;
         GameObject.Find("Canvas/Panel/DayUI").GetComponent<Text>().text = "天数：" + dayCounter;
         GameObject.Find("Canvas/Panel/TimerUI").GetComponent<Text>().text = "病毒升级倒计时：" + NTimer.countdown;
+
+        Text notice = GameObject.Find("Canvas/Notice/NoticeText").GetComponent<Text>();
+        while (noticedEvent.Count > 3) noticedEvent.RemoveAt(0);
+        string displayed = "";
+        foreach (var ele in noticedEvent) displayed += ele + "\n";
+        notice.text = displayed;
 
         if (selected == null)
         {
