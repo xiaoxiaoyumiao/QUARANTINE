@@ -101,6 +101,7 @@ public class Landblock : MonoBehaviour
         // gameObject.GetComponent<SpriteRenderer>().color = Color.white;
     }
 
+    bool selected = false;
     public void BlockClicked(GameObject obj)
     {
         return;
@@ -109,6 +110,13 @@ public class Landblock : MonoBehaviour
     public void UpdateSelected(GameObject obj)
     {
         if (obj == gameObject)
+        {
+            selected = !selected;
+        } else
+        {
+            selected = false;
+        }
+        if (selected)
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
         else
             gameObject.GetComponent<SpriteRenderer>().color = Color.white;

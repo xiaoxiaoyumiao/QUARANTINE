@@ -229,7 +229,7 @@ public class Landscape : MonoBehaviour
             selected = null;
         else
             selected = obj;
-        BroadcastMessage("UpdateSelected", selected); 
+        BroadcastMessage("UpdateSelected", obj); 
     }
 
     public void OperateBlock(Block block)
