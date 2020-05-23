@@ -99,6 +99,8 @@ public class Landscape : MonoBehaviour
 
         blockPanel.SetActive(false);
 
+        taxingCard.gameObject.SetActive(false);
+
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)
         {
@@ -319,6 +321,15 @@ public class Landscape : MonoBehaviour
 
     }
 
+    int totalDeathToll = 0;
+    public void UpdateDeathToll()
+    {
+        foreach (Block block in blocks)
+        {
+            totalDeathToll += block.GetDeathToll();
+        }
+    }
+
     void endRound()
     {
         dayCounter++;
@@ -337,6 +348,7 @@ public class Landscape : MonoBehaviour
             block.Commit();
         }
         UpdateTotalMaterialCount();
+        UpdateDeathToll();
     }
     
 
@@ -397,7 +409,7 @@ public class Landscape : MonoBehaviour
 
     private void OnGUI()
     {
-        GameObject.Find("Canvas/Panel/ResourceUI").GetComponent<Text>().text = "资源总计：" + totalMaterialCount;
+        GameObject.Find("Canvas/Panel/ResourceUI").GetComponent<Text>().text = "死亡人数：" + totalDeathToll;
         GameObject.Find("Canvas/Panel/TaxUI").GetComponent<Text>().text = "政府资源：" + playerMaterialCount;
         GameObject.Find("Canvas/Panel/DayUI").GetComponent<Text>().text = "天数：" + dayCounter;
         GameObject.Find("Canvas/Panel/TimerUI").GetComponent<Text>().text = "病毒升级倒计时：" + NTimer.countdown;

@@ -826,6 +826,12 @@ public class Block
         return VirusCount.Data;
     }
 
+    int lastDeathToll = 0;
+    public int GetDeathToll()
+    {
+        return lastDeathToll;
+    }
+
     /* 回合结束时首先执行的块内结算，不涉及与其他块的数据交换 */
     public void EndInBlock(int develop)
     {
@@ -847,9 +853,9 @@ public class Block
         HPCount.Data -= inf;
 
         int death = Utility.AdaptedRandomNumber(CDR, CIPCount.Data);
-        CIPCount.Data -= death;
+        CIPCount.Data -= death; lastDeathToll = death;
         death = Utility.AdaptedRandomNumber(NDR, NIPCount.Data);
-        NIPCount.Data -= death;
+        NIPCount.Data -= death; lastDeathToll += death;
 
         /* material update */
         lastConsumedMaterial = (int)System.Math.Floor(MCRate*(HPCount.Data+CIPCount.Data));
