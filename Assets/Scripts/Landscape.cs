@@ -100,6 +100,8 @@ public class Landscape : MonoBehaviour
         blockPanel.SetActive(false);
 
         taxingCard.gameObject.SetActive(false);
+        GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = "";
+        GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = "";
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)

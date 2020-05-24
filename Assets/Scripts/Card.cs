@@ -20,6 +20,8 @@ public class Card : MonoBehaviour
     public string cardName;
     GUIStyle titleStyle;
 
+    public string cardIntro;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,26 +34,31 @@ public class Card : MonoBehaviour
             case CardType.QUARANTINE:
                 {
                     cardName = "隔离(1)";
+                    cardIntro = "禁止区域内人口外出。";
                     break;
                 }
             case CardType.STOP_WORKING:
                 {
                     cardName = "停工(2)";
+                    cardIntro = "令工厂停止生产。";
                     break;
                 }
             case CardType.START_WORKING:
                 {
                     cardName = "开工(3)";
+                    cardIntro = "令工厂恢复生产。传播可能变得猛烈。";
                     break;
                 }
             case CardType.SPECIAL_AID:
                 {
                     cardName = "援助(4)";
+                    cardIntro = "治疗区域中的所有感染者。";
                     break;
                 }
             case CardType.TAXING:
                 {
                     cardName = "征税(5)";
+                    cardIntro = "征收一个区域内的资源。";
                     break;
                 }
             default:
@@ -64,7 +71,19 @@ public class Card : MonoBehaviour
     {
         
     }
-    
+
+    private void OnMouseEnter()
+    {
+        GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = cardName;
+        GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = cardIntro;
+    }
+
+    private void OnMouseExit()
+    {
+        GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = "";
+        GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = "";
+    }
+
 
     private void OnMouseUpAsButton()
     {
