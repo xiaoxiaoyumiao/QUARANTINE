@@ -8,12 +8,46 @@ public class Card : MonoBehaviour
     public CardInfo info;
 
     public CardType type;
-    public int cost;
 
-    public string cardName;
+    public CardType Type
+    {
+        get
+        {
+            return info.type;
+        }
+        set
+        {
+            if (value != info.type)
+            {
+                info = CardInfo.GetCardInfo(value);
+            }
+        }
+    }
+
+    public int Cost
+    {
+        get
+        {
+            return info.Cost;
+        }
+    }
+
+    public string CardName
+    {
+        get
+        {
+            return info.CardName;
+        }
+    }
     GUIStyle titleStyle;
 
-    public string cardIntro;
+    public string CardIntro
+    {
+        get
+        {
+            return info.CardIntro;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +56,8 @@ public class Card : MonoBehaviour
         titleStyle.fontSize = 14;
         titleStyle.normal.textColor = Color.black;
 
+        info = CardInfo.GetCardInfo(type);
+        /*
         switch (type)
         {
             case CardType.QUARANTINE:
@@ -57,6 +93,7 @@ public class Card : MonoBehaviour
             default:
                 break;
         }
+        */
     }
 
     // Update is called once per frame
@@ -67,8 +104,8 @@ public class Card : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = cardName;
-        GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = cardIntro;
+        GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = CardName;
+        GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = CardIntro;
     }
 
     private void OnMouseExit()
@@ -121,11 +158,11 @@ public class Card : MonoBehaviour
                 switch (i.name)
                 {
                     case "costUI":
-                        i.text = cost.ToString();
+                        i.text = Cost.ToString();
                         i.fontSize = 14;
                         break;
                     case "Title":
-                        i.text = cardName;
+                        i.text = CardName;
                         break;
                     default:
                         break;
@@ -138,11 +175,11 @@ public class Card : MonoBehaviour
             switch (i.name)
             {
                 case "costUI":
-                    i.text = cost.ToString();
+                    i.text = Cost.ToString();
                     i.fontSize = 14;
                     break;
                 case "Title":
-                    i.text = cardName;
+                    i.text = CardName;
                     break;              
                 default:
                     break;

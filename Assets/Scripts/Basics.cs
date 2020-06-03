@@ -155,6 +155,38 @@ public class Utility
         return GetCanvasObject(range, path).GetComponent<T>();
     }
 
+    public static Dictionary<CardType, string> cardType2str = new Dictionary<CardType, string>
+    {
+        { CardType.QUARANTINE, "Quarantine" },
+        { CardType.STOP_WORKING, "StopWorking" },
+        { CardType.START_WORKING, "StartWorking" },
+        { CardType.SPECIAL_AID, "SpecialAid" },
+        { CardType.TAXING, "Taxing" },
+        { CardType.NONE, "None" }
+    };
+    public static Dictionary<string, CardType> str2CardType;
+    public static string CardTypeToString(CardType type)
+    {
+        if (!cardType2str.ContainsKey(type))
+            return cardType2str[CardType.NONE];
+        return cardType2str[type];
+    }
+    public static CardType StringToCardType(string str)
+    {
+        if (str2CardType == null)
+        {
+            str2CardType = new Dictionary<string, CardType>();
+            foreach (var pair in cardType2str)
+            {
+                str2CardType[pair.Value] = pair.Key;
+            }
+        }
+        if (!str2CardType.ContainsKey(str))
+            return CardType.NONE;
+        return str2CardType[str];
+
+    }
+
     public static Dictionary<BlockType, string> blockType2Str = new Dictionary<BlockType, string>
     {
         { BlockType.FACTORY, "FACTORY" },
@@ -166,11 +198,9 @@ public class Utility
     public static string BlockTypeToString(BlockType type)
     {
         if (blockType2Str.ContainsKey(type))
-        {
             return blockType2Str[type];
-        }
         Debug.Log("WARNING: (BlockTypeToString) BlockType has no translation");
-        return "NONE";
+        return blockType2Str[BlockType.ERROR];
     }
     // O(n) method, may be optimized in future
     public static BlockType StringToBlockType(string name)
@@ -197,7 +227,7 @@ public class Utility
             return blockType2Chstr[type];
         }
         Debug.Log("WARNING: (BlockTypeToChineseString) BlockType has no chinese translation");
-        return "无";
+        return blockType2Chstr[BlockType.ERROR];
     }
 
     public static SpriteType CardToSpriteType(CardType type)

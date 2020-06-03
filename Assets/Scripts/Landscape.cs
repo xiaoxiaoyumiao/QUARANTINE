@@ -100,7 +100,7 @@ public class Landscape : MonoBehaviour
 
         blockPanel.SetActive(false);
 
-        taxingCard.gameObject.SetActive(false);
+        // taxingCard.gameObject.SetActive(false);
         GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = "";
         GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = "";
 
@@ -108,6 +108,8 @@ public class Landscape : MonoBehaviour
         FileParameterManager.Init();
         FileParameterManager.LoadData();
         // FileParameterManager.DumpData(); // for data dumping test
+        FileParameterManager.LoadCardData();
+        // FileParameterManager.DumpCardData(); // for data dumping test
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)
@@ -251,7 +253,7 @@ public class Landscape : MonoBehaviour
         if (selected == null)
             return 1;
 
-        if (playerMaterialCount + card.cost < 0)
+        if (playerMaterialCount + card.Cost < 0)
         {
             return 2;
         }
@@ -264,7 +266,7 @@ public class Landscape : MonoBehaviour
             case CardType.QUARANTINE:
                 {
                     block.Quarantined(10); //TODO parameterize
-                    playerMaterialCount += card.cost;
+                    playerMaterialCount += card.Cost;
                     break;
                 }
             case CardType.STOP_WORKING:
@@ -274,7 +276,7 @@ public class Landscape : MonoBehaviour
                         return 3;
                     }
                     block.StopWorking();
-                    playerMaterialCount += card.cost;
+                    playerMaterialCount += card.Cost;
                     break;
                 }
             case CardType.START_WORKING:
@@ -284,20 +286,20 @@ public class Landscape : MonoBehaviour
                         return 3;
                     }
                     block.StartWorking();
-                    playerMaterialCount += card.cost;
+                    playerMaterialCount += card.Cost;
                     break;
                 }
             case CardType.SPECIAL_AID:
                 {
                     block.Aided();
-                    playerMaterialCount += card.cost;
+                    playerMaterialCount += card.Cost;
                     break;
                 }
             case CardType.TAXING:
                 {
                     if (Utility.GetVirusModel().autoGlobalTaxing) break;
                     playerMaterialCount += block.Taxed();
-                    playerMaterialCount += card.cost;
+                    playerMaterialCount += card.Cost;
                     break;
                 }
             default:

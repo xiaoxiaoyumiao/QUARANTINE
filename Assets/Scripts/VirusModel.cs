@@ -209,7 +209,7 @@ public class BlockTypeParameter
         List<string> ret = new List<string>();
         foreach (var ele in typeof(BlockTypeParameter).GetProperties())
         {
-            if (ele.PropertyType.IsValueType)
+            if (ele.PropertyType.IsValueType) // WARNING: string is not a value type
             {
                 ret.Add(ele.Name);
             }
@@ -260,9 +260,11 @@ public class FileParameterManager
 {
     // path to block parameters
     public static string dataPath;
+    public static string cardDataPath;
     public static void Init()
     {
         dataPath = Application.streamingAssetsPath + "/model_data.csv";
+        cardDataPath = Application.streamingAssetsPath + "/card_data.csv";
     }
 
     public static void DumpData()
@@ -275,8 +277,27 @@ public class FileParameterManager
         {
             data.Add(pair.Value.GetValList(props));
         }
-        CSVTool.Write(dataPath, Encoding.UTF8, data);
-        
+        CSVTool.Write(dataPath, Encoding.UTF8, data);   
+    }
+
+    public static void DumpCardData()
+    {
+        List<List<string>> data = new List<List<string>>();
+        List<string> props = CardInfo.GetPropertyList();
+        props.Insert(0, "type");
+        data.Add(props);
+        data.Add(CardInfo.GetCardInfo(CardType.QUARANTINE).GetValList(props));
+        data.Add(CardInfo.GetCardInfo(CardType.SPECIAL_AID).GetValList(props));
+        data.Add(CardInfo.GetCardInfo(CardType.START_WORKING).GetValList(props));
+        data.Add(CardInfo.GetCardInfo(CardType.STOP_WORKING).GetValList(props));
+        data.Add(CardInfo.GetCardInfo(CardType.TAXING).GetValList(props));
+        /*
+        foreach (var pair in CardInfo.cards)
+        {
+            data.Add(pair.Value.GetValList(props));
+        }
+        */
+        CSVTool.Write(cardDataPath, Encoding.UTF8, data);
     }
 
     public static void LoadData()
@@ -316,6 +337,46 @@ public class FileParameterManager
         Debug.Log(factory.ComsumeFactor);
         Debug.Log(factory.PopulationVolume);
 
+    }
+
+    public static void LoadCardData()
+    {
+        var data = CSVTool.Read(cardDataPath, Encoding.UTF8);
+
+        var props = data[0];
+        if (!props.Contains("type"))
+        {
+            Debug.Log("ERROR: (LoadData) csv TYPE field missing");
+            return;
+        }
+        for (int j = 1; j < data.Count; ++j)
+        {
+            if (data[j].Count != props.Count)
+            {
+                Debug.Log("ERROR: (LoadData) csv data count mismatch");
+                continue;
+            }
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            for (int i = 0; i < props.Count; ++i)
+            {
+                values[props[i]] = data[j][i];
+            }
+
+            CardType type = Utility.StringToCardType(values["type"]);
+            CardInfo param = CardInfo.GetCardInfo(type);
+
+            if (param == null)
+            {
+                Debug.Log("ERROR: (LoadData) invalid csv TYPE field");
+            }
+            param.SetValList(values);
+
+        }
+
+        var quarantine = CardInfo.GetCardInfo(CardType.QUARANTINE);
+        Debug.Log(quarantine.Cost);
+        Debug.Log(quarantine.CardName);
+        Debug.Log(quarantine.CardIntro);
     }
 }
 
