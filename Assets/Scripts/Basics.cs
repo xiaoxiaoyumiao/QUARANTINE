@@ -56,6 +56,51 @@ public enum UIPath
 
 public class Utility
 {
+    public static object GetVal(object that, string property)
+    {
+        return that.GetType().GetProperty(property).GetValue(that);
+    }
+    public static void SetVal(object that, string property, string value)
+    {
+        // todo: parse string to value here
+        var propertyInfo = that.GetType().GetProperty(property);
+        var type = propertyInfo.PropertyType;
+        if (type == typeof(float))
+        {
+            try
+            {
+                float res = float.Parse(value);
+                propertyInfo.SetValue(that, res);
+            }
+            catch
+            {
+                Debug.Log(string.Format("ERROR: (SetVal) invalid csv data {0} for float {1}", value, property));
+                return;
+            }
+        }
+        else if (type == typeof(int))
+        {
+            try
+            {
+                int res = int.Parse(value);
+                propertyInfo.SetValue(that, res);
+            }
+            catch
+            {
+                Debug.Log(string.Format("ERROR: (SetVal) invalid csv data {0} for float {1}", value, property));
+                return;
+            }
+        }
+        else if (type == typeof(string))
+        {
+            propertyInfo.SetValue(that, value);
+        }
+        else// else what?
+        {
+            Debug.Log(string.Format("what's this type of data? {0} -> {1}", type.Name, property));
+        }
+    }
+
     public static int AdaptedRandomNumber(float ratio, int total)
     {
         int part = (int)(Random.Range(0, ratio) * total);

@@ -158,12 +158,16 @@ public class BlockTypeParameter
         {
             return Utility.BlockTypeToString(type);
         }
-        return this.GetType().GetProperty(property).GetValue(this);
+        return Utility.GetVal(this, property);
+        // return this.GetType().GetProperty(property).GetValue(this);
     }
     public void SetVal(string property, string value)
     {
         // todo: parse string to value here
         if (property == "type") return;
+        Utility.SetVal(this, property, value);
+        return;
+        /*
         var propertyInfo = GetType().GetProperty(property);
         var type = propertyInfo.PropertyType;
         if (type == typeof(float))
@@ -198,6 +202,7 @@ public class BlockTypeParameter
         {
             Debug.Log(string.Format("what's this type of data? {0} -> {1}", type.Name, property));
         }
+        */
     }
     public static List<string> GetPropertyList()
     {

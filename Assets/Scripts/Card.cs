@@ -3,15 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum CardType
-{
-    QUARANTINE,
-    STOP_WORKING,
-    START_WORKING,
-    SPECIAL_AID,
-    TAXING
-}
-
 public class Card : MonoBehaviour
 {
     public CardInfo info;
