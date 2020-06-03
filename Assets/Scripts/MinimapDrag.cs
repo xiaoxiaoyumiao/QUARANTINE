@@ -26,7 +26,7 @@ public class MinimapDrag : MonoBehaviour
         drag = GameObject.Find("MinimapDrag");
         box = GetComponent<BoxCollider2D>();
 
-        Debug.Log(viewCamera.transform.position);
+        // Debug.Log(viewCamera.transform.position);
         mapSize = new Vector3(minimapCamera.targetTexture.width,
             minimapCamera.targetTexture.height, 0);
         
@@ -38,10 +38,10 @@ public class MinimapDrag : MonoBehaviour
         RUViewPoint = ViewPointToMapPoint(RUViewPoint);
         Vector3 mapViewScale = RUViewPoint - LDViewPoint;
 
-        Debug.Log("map view scale:"+mapViewScale);
+        // Debug.Log("map view scale:"+mapViewScale);
 
         Rect drect = drag.GetComponent<RectTransform>().rect;
-        Debug.Log(drect.width + "," + drect.height);
+        // Debug.Log(drect.width + "," + drect.height);
         float scaleX = mapViewScale.x / drect.width;
         float scaleY = mapViewScale.y / drect.height;
         
@@ -50,7 +50,7 @@ public class MinimapDrag : MonoBehaviour
         currScale.y = scaleY * currScale.y;
         drag.transform.localScale = currScale;
 
-        Debug.Log("box:"+box.size);
+        // Debug.Log("box:"+box.size);
 
 
     }
@@ -58,13 +58,13 @@ public class MinimapDrag : MonoBehaviour
     private void OnMouseDown()
     {
         Vector3 clickPos = Input.mousePosition;
-        Debug.Log("clicked:" + clickPos);
+        // Debug.Log("clicked:" + clickPos);
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
         clickPos.z = screenPosition.z;
         Vector3 worldTarget = Camera.main.ScreenToWorldPoint(clickPos);
-        Debug.Log("world target:" + worldTarget);
+        // Debug.Log("world target:" + worldTarget);
         Vector3 mapTarget = transform.InverseTransformPoint(worldTarget);
-        Debug.Log("map target:" + mapTarget);
+        // Debug.Log("map target:" + mapTarget);
 
         // Vector3 vec = drag.transform.position;
         // Vector3 dragMapPos = transform.InverseTransformPoint(dragPos);

@@ -14,6 +14,8 @@ public enum CardType
 
 public class Card : MonoBehaviour
 {
+    public CardInfo info;
+
     public CardType type;
     public int cost;
 

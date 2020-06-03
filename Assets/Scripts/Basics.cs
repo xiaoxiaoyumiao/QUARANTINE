@@ -110,19 +110,51 @@ public class Utility
         return GetCanvasObject(range, path).GetComponent<T>();
     }
 
+    public static Dictionary<BlockType, string> blockType2Str = new Dictionary<BlockType, string>
+    {
+        { BlockType.FACTORY, "FACTORY" },
+        { BlockType.HOSPITAL, "HOSPITAL" },
+        { BlockType.HOUSING, "HOUSING" },
+        { BlockType.QUARANTINE, "QUARANTINE" },
+        { BlockType.ERROR, "ERROR" }
+    };
     public static string BlockTypeToString(BlockType type)
     {
-        string blockType = "";
-        switch (type)
+        if (blockType2Str.ContainsKey(type))
         {
-            case BlockType.FACTORY: blockType = "工厂"; break;
-            case BlockType.HOSPITAL: blockType = "医院"; break;
-            case BlockType.HOUSING: blockType = "居民区"; break;
-            case BlockType.QUARANTINE: blockType = "隔离区"; break;
-            default: blockType = "无"; break;
+            return blockType2Str[type];
         }
-        return blockType;
+        Debug.Log("WARNING: (BlockTypeToString) BlockType has no translation");
+        return "NONE";
     }
+    // O(n) method, may be optimized in future
+    public static BlockType StringToBlockType(string name)
+    {
+        foreach (var pair in blockType2Str)
+        {
+            if (pair.Value == name) return pair.Key;
+        }
+        return BlockType.ERROR;
+    }
+
+    public static Dictionary<BlockType, string> blockType2Chstr = new Dictionary<BlockType, string>
+    {
+        { BlockType.FACTORY, "工厂" },
+        { BlockType.HOSPITAL, "医院" },
+        { BlockType.HOUSING, "居民区" },
+        { BlockType.QUARANTINE, "隔离区" },
+        { BlockType.ERROR, "ERROR" }
+    };
+    public static string BlockTypeToChineseString(BlockType type)
+    {
+        if (blockType2Chstr.ContainsKey(type))
+        {
+            return blockType2Chstr[type];
+        }
+        Debug.Log("WARNING: (BlockTypeToChineseString) BlockType has no chinese translation");
+        return "无";
+    }
+
     public static SpriteType CardToSpriteType(CardType type)
     {
         switch (type)
@@ -477,34 +509,7 @@ public class Block
 
         set
         {
-            switch (value)
-            {
-                case BlockType.FACTORY:
-                    {
-                        parameter = BlockTypeParameter.factory;
-                        break;
-                    }
-                case BlockType.HOUSING:
-                    {
-                        parameter = BlockTypeParameter.housing;
-                        break;
-                    }
-                case BlockType.HOSPITAL:
-                    {
-                        parameter = BlockTypeParameter.hospital;
-                        break;
-                    }
-                case BlockType.QUARANTINE:
-                    {
-                        parameter = BlockTypeParameter.quarantine;
-                        break;
-                    }
-                default:
-                    {
-                        parameter = null;
-                        break;
-                    }
-            }
+            parameter = BlockTypeParameter.GetParameter(value);
             blockUI.GetComponent<Landblock>().UpdateSprite();
         }
     }
@@ -576,7 +581,7 @@ public class Block
             return parameter.D_FACTOR * NTimer.DeathRate;
         }
     }
-
+    // Now all variables are maintained here!
     public Dictionary<VarType, Variable<int>> variables;
 
     public Variable<int> HPCount       // Healthy Population

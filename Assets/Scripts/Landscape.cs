@@ -81,6 +81,7 @@ public class Landscape : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // UI init section
         successTitle = GameObject.Find("text/success");
         failTitle = GameObject.Find("text/fail");
         gameOverDialog = GameObject.Find("Canvas/GameOverBackground");
@@ -102,6 +103,11 @@ public class Landscape : MonoBehaviour
         taxingCard.gameObject.SetActive(false);
         GameObject.Find("Canvas/CardInfo/CardTitle").GetComponent<Text>().text = "";
         GameObject.Find("Canvas/CardInfo/CardIntro").GetComponent<Text>().text = "";
+
+        // MODEL init section
+        FileParameterManager.Init();
+        FileParameterManager.LoadData();
+        // FileParameterManager.DumpData(); // for data dumping test
 
         VirusModel model = gameObject.GetComponent<VirusModel>();
         if (model.enableUIVer2)
@@ -463,7 +469,7 @@ public class Landscape : MonoBehaviour
         blockPanel.SetActive(true);
 
         Block block = selected.GetComponent<Landblock>().block;
-        string blockType = Utility.BlockTypeToString(block.type);
+        string blockType = Utility.BlockTypeToChineseString(block.type);
         Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "BlockType").text = "类型：" + blockType;
         Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "POPCount").text = "总人口：" + block.GetTotalPopulation().ToString();
         Utility.GetCanvasComponent<Text>(UIPath.SelectedBasic, "CPCount").text = "感染者：" + block.GetConfirmedInfectedPopulation().ToString();

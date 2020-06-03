@@ -2529,22 +2529,12 @@ PrefabInstance:
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Name
-      value: aid
+      value: cardgrid04
       objectReference: {fileID: 0}
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Layer
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: type
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: cost
-      value: -250
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -2615,6 +2605,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: cost
+      value: -250
       objectReference: {fileID: 0}
     - target: {fileID: 82155859366728474, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -3859,22 +3859,12 @@ PrefabInstance:
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Name
-      value: taxing
+      value: cardgrid05
       objectReference: {fileID: 0}
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Layer
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: type
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: cost
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -3945,6 +3935,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: type
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: cost
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 82155859366728474, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -4417,17 +4417,12 @@ PrefabInstance:
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Name
-      value: quarantine
+      value: cardgrid01
       objectReference: {fileID: 0}
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Layer
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: cost
-      value: -500
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -4498,6 +4493,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: cost
+      value: -500
       objectReference: {fileID: 0}
     - target: {fileID: 82155859366728474, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -5581,22 +5581,12 @@ PrefabInstance:
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Name
-      value: startWorking
+      value: cardgrid03
       objectReference: {fileID: 0}
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Layer
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: type
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: cost
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -5667,6 +5657,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: cost
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 82155859366728474, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -7557,22 +7557,12 @@ PrefabInstance:
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Name
-      value: stopWorking
+      value: cardgrid02
       objectReference: {fileID: 0}
     - target: {fileID: 705269107199089266, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
       propertyPath: m_Layer
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
-        type: 3}
-      propertyPath: cost
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1190844881362984368, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}
@@ -7643,6 +7633,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114537024131879564, guid: 7420ccf327350834ba97796cadb72f6a,
+        type: 3}
+      propertyPath: cost
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 82155859366728474, guid: 7420ccf327350834ba97796cadb72f6a,
         type: 3}

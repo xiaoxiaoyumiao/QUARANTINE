@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 // Warning: all parameters will be overwritten at runtime
 public class VirusModel : MonoBehaviour
@@ -38,12 +39,13 @@ public class VirusModel : MonoBehaviour
     public float virusAmplitude = 1.0f;
     public float virusGradient = 0.01f;
 
+    /*
     [Header("Block Parameters")]
-    // Defined beneath
     public BlockTypeParameter factory = new BlockTypeParameter(BlockType.FACTORY);
     public BlockTypeParameter housing = new BlockTypeParameter(BlockType.HOUSING);
     public BlockTypeParameter hospital = new BlockTypeParameter(BlockType.HOSPITAL);
     public BlockTypeParameter quarantine = new BlockTypeParameter(BlockType.QUARANTINE);
+    */
 
     [Header("Mechanic Options")]
     // set this flag to true if you want to generate random population for all blocks
@@ -93,6 +95,7 @@ public class VirusModel : MonoBehaviour
 [System.Serializable]
 public class BlockTypeParameter
 {
+    /*
     [System.NonSerialized]
     private static BlockTypeParameter mFactory;
     [System.NonSerialized]
@@ -101,7 +104,28 @@ public class BlockTypeParameter
     private static BlockTypeParameter mHospital;
     [System.NonSerialized]
     private static BlockTypeParameter mQuarantine;
+    */
+    [System.NonSerialized]
+    private static Dictionary<BlockType, BlockTypeParameter> parameters = new Dictionary<BlockType, BlockTypeParameter>();
+    public static Dictionary<BlockType, BlockTypeParameter> Parameters
+    {
+        get
+        {
+            return parameters;
+        }
+    }
+    public static BlockTypeParameter GetParameter(BlockType type)
+    {
+        if (parameters.ContainsKey(type))
+        {
+            return parameters[type];
+        }   
+        Debug.Log("WARNING: (BlockTypeParameter:GetParameter) parameter not found. New entry created.");
+        parameters[type] = new BlockTypeParameter(type);
+        return parameters[type];
+    }
 
+    /*
     public static BlockTypeParameter factory
     {
         get
@@ -138,10 +162,24 @@ public class BlockTypeParameter
             return mQuarantine;
         }
     }
+    */
 
     [System.NonSerialized]
     public BlockType type;
 
+    public float RFactor { get { return R_FACTOR; } set { R_FACTOR = value; } }
+    public float DFactor { get { return D_FACTOR; } set { D_FACTOR = value; } }
+    public float ComsumeFactor { get { return CONSUME_FACTOR; } set { CONSUME_FACTOR = value; } }
+    public float ProduceFactor { get { return PRODUCE_FACTOR; } set { PRODUCE_FACTOR = value; } }
+    public float TaxRate { get { return TAX_RATE; } set { TAX_RATE = value; } }
+    public float HPMoveRatio { get { return HP_MOVE_RATIO; } set { HP_MOVE_RATIO = value; } }
+    public float CIPMoveRatio { get { return CIP_MOVE_RATIO; } set { CIP_MOVE_RATIO = value; } }
+    public float NIPMoveRatio { get { return NIP_MOVE_RATIO; } set { NIP_MOVE_RATIO = value; } }
+    public float MMoveRatio { get { return M_MOVE_RATIO; } set { M_MOVE_RATIO = value; } }
+    public float VirusMoveRatio { get { return VIRUS_MOVE_RATIO; } set { VIRUS_MOVE_RATIO = value; } }
+    public float CIPPriorityOffset { get { return CIP_PRIORITY_OFFSET; } set { CIP_PRIORITY_OFFSET = value; } }
+    public int PopulationVolume { get { return POPULATION_VOLUME; } set { POPULATION_VOLUME = value; } }
+    
     // reproduction rate factor
     public float R_FACTOR = 2.0f;
     // death rate factor
@@ -164,11 +202,87 @@ public class BlockTypeParameter
     public float VIRUS_MOVE_RATIO = 0.5f;
 
     public float CIP_PRIORITY_OFFSET = 0.0f;
-
+    // population constraint if population volume enabled
     public int POPULATION_VOLUME = 550;
 
     [System.NonSerialized]
     public int RESOURCE_MIN = 0;
+
+    public object GetVal(string property)
+    {
+        if (property == "type")
+        {
+            return Utility.BlockTypeToString(type);
+        }
+        return this.GetType().GetProperty(property).GetValue(this);
+    }
+    public void SetVal(string property, string value)
+    {
+        // todo: parse string to value here
+        if (property == "type") return;
+        var propertyInfo = GetType().GetProperty(property);
+        var type = propertyInfo.PropertyType;
+        if (type == typeof(float))
+        {
+            try
+            {
+                float res = float.Parse(value);
+                propertyInfo.SetValue(this, res);
+            }
+            catch
+            {
+                Debug.Log(string.Format("ERROR: (SetVal) invalid csv data {0} for float {1}", value, property));
+                return;
+            }
+        } else if (type == typeof(int))
+        {
+            try
+            {
+                int res = int.Parse(value);
+                propertyInfo.SetValue(this, res);
+            }
+            catch
+            {
+                Debug.Log(string.Format("ERROR: (SetVal) invalid csv data {0} for float {1}", value, property));
+                return;
+            }
+        } else if (type == typeof(string)) 
+        {
+            propertyInfo.SetValue(this, value);
+        }
+        else// else what?
+        {
+            Debug.Log(string.Format("what's this type of data? {0} -> {1}", type.Name, property));
+        }
+    }
+    public static List<string> GetPropertyList()
+    {
+        List<string> ret = new List<string>();
+        foreach (var ele in typeof(BlockTypeParameter).GetProperties())
+        {
+            if (ele.PropertyType.IsValueType)
+            {
+                ret.Add(ele.Name);
+            }
+        }
+        return ret;
+    }
+    public List<string> GetValList(List<string> properties)
+    {
+        List<string> ret = new List<string>();
+        foreach (var ele in properties)
+        {
+            ret.Add(GetVal(ele).ToString());
+        }
+        return ret;
+    }
+    public void SetValList(Dictionary<string, string> values)
+    {
+        foreach (var pair in values)
+        {
+            SetVal(pair.Key, pair.Value);
+        }
+    }
 
     public BlockTypeParameter(BlockType mType)
     {
@@ -190,6 +304,68 @@ public class BlockTypeParameter
             POPULATION_VOLUME = 100;
         }
     }
+    
+}
 
+public class FileParameterManager
+{
+    public static string dataPath;
+    public static void Init()
+    {
+        dataPath = Application.streamingAssetsPath + "/model_data.csv";
+    }
+
+    public static void DumpData()
+    {
+        List<List<string>> data = new List<List<string>>();
+        List<string> props = BlockTypeParameter.GetPropertyList();
+        props.Insert(0, "type");
+        data.Add(props);
+        foreach (var pair in BlockTypeParameter.Parameters)
+        {
+            data.Add(pair.Value.GetValList(props));
+        }
+        CSVTool.Write(dataPath, Encoding.UTF8, data);
+        
+    }
+
+    public static void LoadData()
+    {
+        var data = CSVTool.Read(dataPath, Encoding.UTF8);
+        var props = data[0];
+        if (!props.Contains("type"))
+        {
+            Debug.Log("ERROR: (LoadData) csv TYPE field missing");
+            return;
+        }
+        for (int j = 1; j < data.Count; ++j)
+        {
+            if (data[j].Count != props.Count)
+            {
+                Debug.Log("ERROR: (LoadData) csv data count mismatch");
+                continue;
+            }
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            for (int i = 0; i < props.Count; ++i)
+            {
+                values[props[i]] = data[j][i];
+            }
+            BlockType type = Utility.StringToBlockType(values["type"]);
+            BlockTypeParameter param = BlockTypeParameter.GetParameter(type);
+            if (param == null)
+            {
+                Debug.Log("ERROR: (LoadData) invalid csv TYPE field");
+            }
+            param.SetValList(values);
+            
+        }
+
+        var factory = BlockTypeParameter.GetParameter(BlockType.FACTORY);
+        Debug.Log(factory.RFactor);
+        Debug.Log(factory.DFactor);
+        Debug.Log(factory.ComsumeFactor);
+        Debug.Log(factory.PopulationVolume);
+
+    }
 }
 
