@@ -39,14 +39,6 @@ public class VirusModel : MonoBehaviour
     public float virusAmplitude = 1.0f;
     public float virusGradient = 0.01f;
 
-    /*
-    [Header("Block Parameters")]
-    public BlockTypeParameter factory = new BlockTypeParameter(BlockType.FACTORY);
-    public BlockTypeParameter housing = new BlockTypeParameter(BlockType.HOUSING);
-    public BlockTypeParameter hospital = new BlockTypeParameter(BlockType.HOSPITAL);
-    public BlockTypeParameter quarantine = new BlockTypeParameter(BlockType.QUARANTINE);
-    */
-
     [Header("Mechanic Options")]
     // set this flag to true if you want to generate random population for all blocks
     // the range of random generation is defined in VirusModel
@@ -95,16 +87,7 @@ public class VirusModel : MonoBehaviour
 [System.Serializable]
 public class BlockTypeParameter
 {
-    /*
-    [System.NonSerialized]
-    private static BlockTypeParameter mFactory;
-    [System.NonSerialized]
-    private static BlockTypeParameter mHousing;
-    [System.NonSerialized]
-    private static BlockTypeParameter mHospital;
-    [System.NonSerialized]
-    private static BlockTypeParameter mQuarantine;
-    */
+
     [System.NonSerialized]
     private static Dictionary<BlockType, BlockTypeParameter> parameters = new Dictionary<BlockType, BlockTypeParameter>();
     public static Dictionary<BlockType, BlockTypeParameter> Parameters
@@ -124,45 +107,6 @@ public class BlockTypeParameter
         parameters[type] = new BlockTypeParameter(type);
         return parameters[type];
     }
-
-    /*
-    public static BlockTypeParameter factory
-    {
-        get
-        {
-            if (mFactory == null)
-                mFactory = Utility.GetVirusModel().factory;
-            return mFactory;
-        }
-    }
-    public static BlockTypeParameter housing
-    {
-        get
-        {
-            if (mHousing == null)
-                mHousing = Utility.GetVirusModel().housing;
-            return mHousing;
-        }
-    }
-    public static BlockTypeParameter hospital
-    {
-        get
-        {
-            if (mHospital == null)
-                mHospital = Utility.GetVirusModel().hospital;
-            return mHospital;
-        }
-    }
-    public static BlockTypeParameter quarantine
-    {
-        get
-        {
-            if (mQuarantine == null)
-                mQuarantine = Utility.GetVirusModel().quarantine;
-            return mQuarantine;
-        }
-    }
-    */
 
     [System.NonSerialized]
     public BlockType type;
@@ -309,6 +253,7 @@ public class BlockTypeParameter
 
 public class FileParameterManager
 {
+    // path to block parameters
     public static string dataPath;
     public static void Init()
     {
