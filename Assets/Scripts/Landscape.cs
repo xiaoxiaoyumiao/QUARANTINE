@@ -172,7 +172,7 @@ public class Landscape : MonoBehaviour
             return; // happen?
         /* TODO: handle with score recording. 
          * It should be directly written to local files  */
-        int score = playerMaterialCount;
+        int score = (int)((failLimitedTime - dayCounter) *100 / (Mathf.Log(totalDeathToll + 1) + 1));
         if (gameState == GameState.FAILURE) score = 0;
         if (Utility.GetVirusModel().enableUIVer2)
         {
@@ -292,6 +292,8 @@ public class Landscape : MonoBehaviour
                 }
             case CardType.SPECIAL_AID:
                 {
+                    if (dayCounter <= 5)
+                        return 3;
                     block.Aided();
                     playerMaterialCount += card.Cost;
                     break;
