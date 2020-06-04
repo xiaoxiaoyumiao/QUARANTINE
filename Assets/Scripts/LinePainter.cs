@@ -6,6 +6,7 @@ public class LinePainter : MonoBehaviour
 {
     public Material material;
     public Color lineColor;
+    public Color cutLineColor;
     public float lineSize = 1f;
 
     Landscape landscape;
@@ -48,7 +49,7 @@ public class LinePainter : MonoBehaviour
 
     List<GameObject> lines = new List<GameObject>();
 
-    public void PaintLine(Vector3 start, Vector3 end)
+    public void PaintLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
     {
         GameObject line = new GameObject();
         lines.Add(line);
@@ -56,8 +57,9 @@ public class LinePainter : MonoBehaviour
         myRenderer = line.AddComponent<LineRenderer>();
 
         myRenderer.material = material;
-        myRenderer.startColor = lineColor;
-        myRenderer.endColor = lineColor;
+        
+        myRenderer.startColor = startColor;
+        myRenderer.endColor = endColor;
 
         myRenderer.startWidth = lineSize;
         myRenderer.endWidth = lineSize;
@@ -68,21 +70,37 @@ public class LinePainter : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    
+    void UpdateLines()
     {
-       foreach (var ele in lines)
+        Utility.DirtyLines = false;
+        foreach (var ele in lines)
         {
             Destroy(ele);
         }
-       foreach (var block in Blocks)
+        foreach (var block in Blocks)
         {
             Vector3 start = block.blockUI.transform.position;
             foreach (var outb in block.outBlocks)
             {
                 Vector3 end = outb.blockUI.transform.position;
-                PaintLine(start, end);
+                Color startColor = cutLineColor;
+                Color endColor = cutLineColor;
+
+                if (block.GetPermission(outb))
+                    startColor = lineColor;
+                if (outb.GetPermission(block))
+                    endColor = lineColor;
+                    ;
+                PaintLine(start, end, startColor, endColor);
             }
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Utility.DirtyLines)
+            UpdateLines();
     }
 }

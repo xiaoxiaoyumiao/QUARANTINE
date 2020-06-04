@@ -130,6 +130,7 @@ public class Utility
         }
         return model;
     }
+    public static bool DirtyLines = false;
 
     public static GameObject GetCanvasObject(UIPath range, string path)
     {
@@ -435,6 +436,11 @@ public class Variable<T> where T: struct
         {
             permitOutVar[var] = permission;
         }
+    }
+
+    public bool GetPermission(Variable<T> var)
+    {
+        return permitOutVar[var];
     }
 
     public virtual void Broadcast(float ratio, float offset = 0.0f) { }
@@ -778,6 +784,26 @@ public class Block
             {
                 pair.Value.SetPermission(target.GetVariableOfType(pair.Key), permission);
             }          
+        } else
+        {
+            GetVariableOfType(type).SetPermission(target.GetVariableOfType(type), permission);
+        }
+    }
+
+    public bool GetPermission(Block target, VarType type = VarType.NONE)
+    {
+        bool perm = true;
+        if (type == VarType.NONE)
+        {
+            foreach (KeyValuePair<VarType, Variable<int>> pair in variables)
+            {
+                perm = perm & pair.Value.GetPermission(target.GetVariableOfType(pair.Key));
+            }
+            return perm;
+        }
+        else
+        {
+            return GetVariableOfType(type).GetPermission(target.GetVariableOfType(type));
         }
     }
 
@@ -879,13 +905,30 @@ public class Block
 
     int QUARANTINE_PERIOD = -1;
     bool isQuarantined;
-    public bool IsQuarantined { get { return isQuarantined;  } }
+    public bool IsQuarantined
+    {
+        get
+        {
+            return isQuarantined;
+        }
+
+        set
+        {
+            isQuarantined = value;
+            bool permission = !isQuarantined;
+            foreach (var outb in outBlocks)
+            {
+                SetPermission(outb, permission);
+            }
+            Utility.DirtyLines = true;
+        }
+    }
 
     int quarantineCounter;
     public int QuarantineCounter { get { return quarantineCounter;  } }
     public int Quarantined(int period)
     {
-        isQuarantined = true;
+        IsQuarantined = true;
         QUARANTINE_PERIOD = period;
         quarantineCounter = period;
         return 0;
@@ -951,14 +994,14 @@ public class Block
     /* 这一阶段涉及的数据计算一般需要依赖于来自其他区块的数据 */
     public void EndRound()
     {
-        if (isQuarantined)
+        if (IsQuarantined)
         {
             quarantineCounter -= 1;
             if (quarantineCounter == 0)
             {
-                isQuarantined = false;
+                IsQuarantined = false;
             }
-            return;
+            // return;
         }
 
         if (model.enableVolumeConstraint)

@@ -156,6 +156,7 @@ public class Landscape : MonoBehaviour
         }
 
         UpdateTotalMaterialCount();
+        Utility.DirtyLines = true;
 
         materialStyle.fontSize = 30;
     }
