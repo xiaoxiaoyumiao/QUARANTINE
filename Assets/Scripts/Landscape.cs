@@ -22,6 +22,7 @@ public class Landscape : MonoBehaviour
 
     [Header("condition")]
     public int failLimitedTime;
+    public float lastingTimePerDay = 6.0f;
 
     [Header("card")]
     public Card quarantineCard;
@@ -394,7 +395,7 @@ public class Landscape : MonoBehaviour
     
 
     // Update is called once per frame
-    int counter;
+    float counter;
     // game state, defined in Basics
     GameState gameState = GameState.RUNNING;
     // judgment of success and failure
@@ -433,8 +434,8 @@ public class Landscape : MonoBehaviour
         if (gameState != GameState.RUNNING)
             return;
 
-        counter++;
-        if (counter > 60 * 3)
+        counter += Time.deltaTime;
+        if (counter > lastingTimePerDay)
         {
             endRound();
             counter = 0;
