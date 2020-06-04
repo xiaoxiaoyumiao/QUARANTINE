@@ -13,6 +13,10 @@ public class ExitGame : MonoBehaviour
 
     void OnClick()
     {
+#if UNITY_EDITOR
+        if (Application.isEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
         Application.Quit();
     }
     // Update is called once per frame

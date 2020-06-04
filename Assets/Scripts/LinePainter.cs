@@ -52,9 +52,11 @@ public class LinePainter : MonoBehaviour
     public void PaintLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
     {
         GameObject line = new GameObject();
+        
         lines.Add(line);
         line.transform.parent = transform;
         myRenderer = line.AddComponent<LineRenderer>();
+        myRenderer.sortingOrder = -1;
 
         myRenderer.material = material;
         
