@@ -5557,6 +5557,8 @@ MonoBehaviour:
   failTitle: {fileID: 2098545525}
   gameOverDialog: {fileID: 0}
   failLimitedTime: 100
+  lastingTimePerDay: 2
+  cardManager: {fileID: 1938485533}
   quarantineCard: {fileID: 977180414}
   stopWorkingCard: {fileID: 287875265}
   startWorkingCard: {fileID: 1349146333}
