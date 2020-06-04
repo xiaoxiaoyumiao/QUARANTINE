@@ -463,6 +463,11 @@ public class Landscape : MonoBehaviour
         foreach (var ele in noticedEvent) displayed += ele + "\n";
         notice.text = displayed;
 
+        Text noticeDate = GameObject.Find("Canvas/Notice/NoticeDate").GetComponent<Text>();
+        int month = 1 + (dayCounter / 28) % 12 ;
+        int day = 1 + (dayCounter % 28);
+        noticeDate.text = month.ToString() + "月" + day.ToString() + "日";
+
         if (selected == null)
         {
             blockPanel.SetActive(false);
