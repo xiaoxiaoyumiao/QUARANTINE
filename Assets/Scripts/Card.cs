@@ -7,9 +7,9 @@ public class Card : MonoBehaviour
 {
     public CardInfo info;
 
-    public CardType type;
+    // public CardType type;
 
-    public CardType Type
+    public CardType type
     {
         get
         {
@@ -17,7 +17,7 @@ public class Card : MonoBehaviour
         }
         set
         {
-            if (value != info.type)
+            if (info == null || value != info.type)
             {
                 info = CardInfo.GetCardInfo(value);
             }
@@ -56,7 +56,8 @@ public class Card : MonoBehaviour
         titleStyle.fontSize = 14;
         titleStyle.normal.textColor = Color.black;
 
-        info = CardInfo.GetCardInfo(type);
+        type = CardType.NONE;
+        // info = CardInfo.GetCardInfo(type);
         /*
         switch (type)
         {

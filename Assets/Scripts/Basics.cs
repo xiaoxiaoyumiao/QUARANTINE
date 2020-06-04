@@ -36,6 +36,7 @@ public enum SpriteType
     CARD_START_WORKING = 19,
     CARD_QUARANTINE = 20,
     CARD_TAX = 21,  
+    CARD_NONE = 22,
     RANDOM_ROAD = 128
 }
 
@@ -239,6 +240,7 @@ public class Utility
             case CardType.START_WORKING: return SpriteType.CARD_START_WORKING;
             case CardType.STOP_WORKING: return SpriteType.CARD_STOP_WORKING;
             case CardType.TAXING: return SpriteType.CARD_TAX;
+            case CardType.NONE: return SpriteType.CARD_NONE;
             default: return SpriteType.ERROR;
         }
     }
@@ -260,7 +262,7 @@ public class Utility
                 sprites.Add(ele, tmp);
             }
             directory = "UI2/CARDS/CARD_{0}";
-            string[] cards = new string[]{"AID","QUARANTINE","START_WORKING","STOP_WORKING","TAX" };
+            string[] cards = new string[]{"AID","QUARANTINE","START_WORKING","STOP_WORKING","TAX", "EMPTY" };
             foreach (string ele in cards)
             {
                 Object pref = Resources.Load(string.Format(directory, ele), typeof(Sprite));
@@ -303,6 +305,8 @@ public class Utility
                 return sprites["CARD_STOP_WORKING"];
             case SpriteType.CARD_TAX:
                 return sprites["CARD_TAX"];
+            case SpriteType.CARD_NONE:
+                return sprites["CARD_EMPTY"];
             default: // should be a error placeholder
                 return null;
         }

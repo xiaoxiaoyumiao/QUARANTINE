@@ -106,7 +106,7 @@ public class CardManager : MonoBehaviour
         if (currentPage > 0)
         {
             currentPage--;
-            UpdateCard();
+            // UpdateCard();
         }
     }
 
@@ -115,7 +115,7 @@ public class CardManager : MonoBehaviour
         if ((currentPage + 1) * 5 < cardTypes.Length)
         {
             currentPage++;
-            UpdateCard();
+            // UpdateCard();
         }
     }
 
@@ -132,6 +132,6 @@ public class CardManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        UpdateCard();
     }
 }
