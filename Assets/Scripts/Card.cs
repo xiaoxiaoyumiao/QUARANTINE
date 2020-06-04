@@ -24,6 +24,14 @@ public class Card : MonoBehaviour
         }
     }
 
+    public int freezingTime
+    {
+        get
+        {
+            return info.freezingTime;
+        }
+    }
+
     public int Cost
     {
         get
@@ -128,6 +136,7 @@ public class Card : MonoBehaviour
 
     private void OnGUI()
     {
+
         Canvas[] cvs = GetComponentsInChildren<Canvas>(true);
         Canvas cv = null;
         string name = "Canvas";

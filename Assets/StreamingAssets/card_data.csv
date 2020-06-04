@@ -1,7 +1,7 @@
-﻿type,Cost,CardName,CardIntro
-Quarantine,-200,隔离(1),禁止区域内人口外出。
-SpecialAid,-250,援助(4),治疗区域中的所有感染者,五天后才能使用。
-StartWorking,0,开工(3),令工厂恢复生产。传播可能变得猛烈。
-StopWorking,0,停工(2),令工厂停止生产。
-Taxing,0,征税(5),征收一个区域内的资源。
-None,0,None,None
+﻿type,Cost,freezingTime,CardName,CardIntro
+Quarantine,-200,0,隔离(1),禁止区域内人口外出。
+SpecialAid,-250,5,援助(4),治疗区域中的感染者 。
+StartWorking,0,0,开工(3),令工厂恢复生产。传播可能变得猛烈。
+StopWorking,0,0,停工(2),令工厂停止生产。
+Taxing,0,征税(5),0,征收一个区域内的资源。
+None,0,0,None,None

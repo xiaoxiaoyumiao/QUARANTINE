@@ -22,7 +22,10 @@ public class Landscape : MonoBehaviour
 
     [Header("condition")]
     public int failLimitedTime;
-    public float lastingTimePerDay = 6.0f;
+    public float lastingTimePerDay = 2.0f;
+
+    [Header("cardManager")]
+    public CardManager cardManager;
 
     [Header("card")]
     public Card quarantineCard;
@@ -173,7 +176,7 @@ public class Landscape : MonoBehaviour
             return; // happen?
         /* TODO: handle with score recording. 
          * It should be directly written to local files  */
-        int score = (int)((failLimitedTime - dayCounter) *100 / (Mathf.Log(totalDeathToll + 1) + 1));
+        int score = (int)((failLimitedTime) *100 / (Mathf.Log(totalDeathToll + 1) + 1));
         if (gameState == GameState.FAILURE) score = 0;
         if (Utility.GetVirusModel().enableUIVer2)
         {
@@ -426,6 +429,7 @@ public class Landscape : MonoBehaviour
 
     void Update()
     {
+        cardManager.dayCount = dayCounter;
         GameState s = gameState;
         gameState = CheckSucceedOrFail();
         if (s == GameState.RUNNING && 

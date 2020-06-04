@@ -64,12 +64,15 @@ public class CardInfo
     }
 
     public CardType type;
+    public int freezingTime { get; set; }
     public CardInfo(CardType mtype)
     {
         type = mtype;
         Cost = 0;
         CardName = "";
         CardIntro = "";
+
+        freezingTime = 0;
     }
 
     public int Cost { get; set; }
@@ -83,6 +86,7 @@ public class CardManager : MonoBehaviour
     // These are all cards that are available in the current level
     public CardType[] cardTypes;
     public Card[] cardGrids = new Card[5];
+    public int dayCount { get; set; }
 
     int currentPage = 0;
     int maxPage = 0;
@@ -126,6 +130,8 @@ public class CardManager : MonoBehaviour
         {
             if (currentPage * 5 + i >= cardTypes.Length) break;
             cardGrids[i].type = cardTypes[currentPage * 5 + i];
+            if (cardGrids[i].freezingTime > dayCount) //初始会限制一些卡牌使用
+                cardGrids[i].type = CardType.NONE;//
         }
     }
 
